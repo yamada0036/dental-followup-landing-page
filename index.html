@@ -1,462 +1,208 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI-assisted follow-up workflow for dental offices: recall, reactivation, missed follow-ups, rescheduling, and human-reviewed patient outreach." />
-  <title>Dental Follow-Up Recovery Workflow</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dental Follow-Up Recovery | AI Front Desk Workflow for Dental Practices</title>
+  <meta name="description" content="Recover missed dental calls, overdue recalls, treatment follow-ups, and patient reactivation opportunities with an AI-assisted front-desk workflow." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://yamada0036.github.io/dental-followup-landing-page/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yamada0036.github.io/dental-followup-landing-page/" />
+  <meta property="og:title" content="Recover missed dental follow-ups" />
+  <meta property="og:description" content="AI-assisted workflow for missed calls, overdue recalls, treatment follow-ups, and front-desk handoff." />
+  <meta property="og:image" content="https://yamada0036.github.io/dental-followup-landing-page/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Recover missed dental follow-ups" />
+  <meta name="twitter:description" content="AI-assisted workflow for missed calls, overdue recalls, treatment follow-ups, and front-desk handoff." />
+  <meta name="twitter:image" content="https://yamada0036.github.io/dental-followup-landing-page/og-image.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Dental Follow-Up Recovery",
+    "description": "AI-assisted front-desk workflow for dental practices to recover missed calls, overdue recalls, treatment follow-ups, and patient reactivation opportunities.",
+    "areaServed": "Remote",
+    "serviceType": "Dental front-desk workflow automation",
+    "url": "https://yamada0036.github.io/dental-followup-landing-page/"
+  }
+  </script>
+
   <style>
     :root {
-      --bg: #f7f4ef;
+      --bg: #f5f8f7;
       --card: #ffffff;
-      --text: #1f2933;
-      --muted: #64748b;
-      --line: #e5e7eb;
-      --dark: #111827;
-      --accent: #2563eb;
-      --accent-soft: #e8f0ff;
-      --green: #16a34a;
-      --amber: #d97706;
-      --red: #dc2626;
-      --shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
+      --ink: #15202b;
+      --muted: #64706f;
+      --line: #dbe5e3;
+      --green: #2f6f57;
+      --green-dark: #234f3f;
+      --soft: #eaf3f1;
+      --amber: #f4b740;
+      --shadow: 0 18px 50px rgba(27, 54, 48, 0.12);
     }
-
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #eef5ff 0, transparent 34%), var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
     }
-
-    a { color: inherit; text-decoration: none; }
-
-    .container {
-      width: min(1120px, calc(100% - 40px));
-      margin: 0 auto;
-    }
-
-    header {
-      padding: 24px 0;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .logo {
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--dark);
-      font-size: 20px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 999px;
-      background: var(--dark);
-      color: white;
-      font-weight: 700;
-      border: 1px solid var(--dark);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .button:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(17, 24, 39, 0.16); }
-    .button.secondary { background: white; color: var(--dark); border-color: var(--line); }
-
-    .hero {
-      padding: 70px 0 44px;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 44px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      font-size: clamp(42px, 7vw, 72px);
-      line-height: 0.96;
-      letter-spacing: -0.07em;
-      margin: 0 0 22px;
-      color: var(--dark);
-    }
-
-    .hero p {
-      font-size: 19px;
-      color: var(--muted);
-      margin: 0 0 28px;
-      max-width: 650px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 26px;
-    }
-
-    .microcopy {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .screen {
-      background: #f9fafb;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .screen-top {
-      height: 48px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 18px;
-      background: white;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; }
-
-    .dashboard {
-      padding: 18px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .mini-card {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-    }
-
-    .mini-card.wide { grid-column: 1 / -1; }
-    .label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .value { font-size: 24px; font-weight: 800; letter-spacing: -0.04em; color: var(--dark); }
-    .patient-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .patient-row:last-child { border-bottom: 0; }
-    .patient-name { font-weight: 750; }
-    .patient-reason { color: var(--muted); font-size: 13px; }
-    .pill {
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 750;
-      background: #f1f5f9;
-      color: #334155;
-      white-space: nowrap;
-    }
-    .pill.high { background: #fee2e2; color: var(--red); }
-    .pill.medium { background: #fef3c7; color: var(--amber); }
-    .pill.ready { background: #dcfce7; color: var(--green); }
-
-    section { padding: 70px 0; }
-
-    .section-head {
-      max-width: 720px;
-      margin-bottom: 32px;
-    }
-    h2 {
-      font-size: clamp(32px, 4vw, 48px);
-      line-height: 1;
-      letter-spacing: -0.055em;
-      margin: 0 0 16px;
-      color: var(--dark);
-    }
-    .section-head p { color: var(--muted); font-size: 18px; margin: 0; }
-
-    .three-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .feature-card {
-      background: var(--card);
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 26px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-    }
-    .number {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 900;
-      margin-bottom: 16px;
-    }
-    .feature-card h3 { margin: 0 0 10px; font-size: 21px; letter-spacing: -0.03em; color: var(--dark); }
-    .feature-card p { color: var(--muted); margin: 0; }
-
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .list-card {
-      background: white;
-      border-radius: 28px;
-      border: 1px solid var(--line);
-      padding: 28px;
-      box-shadow: 0 16px 45px rgba(15, 23, 42, 0.07);
-    }
-    .list-card h3 { margin: 0 0 16px; color: var(--dark); letter-spacing: -0.03em; font-size: 26px; }
-    .check-list { padding: 0; margin: 0; list-style: none; display: grid; gap: 12px; }
-    .check-list li { display: flex; gap: 10px; align-items: flex-start; color: var(--muted); }
-    .check { color: var(--green); font-weight: 900; }
-    .x { color: var(--red); font-weight: 900; }
-
-    .mock-convo {
-      background: var(--dark);
-      color: white;
-      border-radius: 30px;
-      padding: 26px;
-      box-shadow: var(--shadow);
-    }
-    .bubble {
-      padding: 12px 14px;
-      border-radius: 18px;
-      max-width: 86%;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-    .bubble.patient { background: #374151; }
-    .bubble.ai { background: #dbeafe; color: #1e3a8a; margin-left: auto; }
-    .handoff {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-    .handoff strong { display: block; margin-bottom: 6px; }
-    .handoff span { color: #cbd5e1; font-size: 14px; }
-
-    .cta {
-      background: var(--dark);
-      color: white;
-      border-radius: 36px;
-      padding: 44px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 24px;
-      align-items: center;
-    }
-    .cta h2 { color: white; margin-bottom: 12px; }
-    .cta p { color: #cbd5e1; margin: 0; font-size: 18px; }
-    .cta .button { background: white; color: var(--dark); border-color: white; }
-
-    footer {
-      padding: 36px 0 48px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
+    a { color: inherit; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
+    .brand { display:flex; gap:12px; align-items:center; font-weight:800; letter-spacing:-.02em; }
+    .logo { width:36px; height:36px; border-radius:10px; background:var(--green); display:grid; place-items:center; color:white; font-weight:900; }
+    .nav a { text-decoration:none; color:var(--muted); font-weight:600; margin-left:22px; font-size:14px; }
+    .hero { padding: 42px 0 70px; }
+    .hero-grid { display:grid; grid-template-columns: 1.02fr .98fr; gap:44px; align-items:center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:white; padding:8px 13px; border-radius:99px; color:var(--green-dark); font-weight:750; font-size:14px; }
+    h1 { font-size: clamp(42px, 6vw, 72px); line-height: .98; letter-spacing: -.055em; margin: 24px 0 18px; }
+    .lead { font-size: clamp(18px, 2vw, 22px); color:#43504f; max-width: 640px; }
+    .actions { display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; padding:14px 20px; border-radius:14px; text-decoration:none; font-weight:800; border:1px solid var(--green); }
+    .btn.primary { background: var(--green); color:white; }
+    .btn.secondary { background:white; color:var(--green-dark); }
+    .note { margin-top:16px; color:var(--muted); font-size:14px; }
+    .mock { background:linear-gradient(180deg,#ffffff,#f8fbfa); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow); overflow:hidden; }
+    .mock-top { height:54px; display:flex; align-items:center; gap:8px; padding:0 20px; border-bottom:1px solid var(--line); background:#fbfdfd; }
+    .dot { width:10px; height:10px; border-radius:50%; background:#cad7d5; }
+    .mock-body { padding:22px; }
+    .queue-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .queue-title strong { font-size:18px; }
+    .tag { border-radius:99px; background:#eaf4ef; color:var(--green-dark); padding:5px 10px; font-size:12px; font-weight:800; }
+    .patient { display:grid; grid-template-columns: 1fr auto; gap:12px; padding:16px; background:#fff; border:1px solid var(--line); border-radius:18px; margin-bottom:12px; }
+    .patient b { display:block; }
+    .patient span { color:var(--muted); font-size:14px; }
+    .pill { padding:6px 10px; border-radius:999px; background:#f8f1df; color:#7a5210; font-size:12px; font-weight:800; align-self:start; }
+    .review { margin-top:18px; display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+    .mini { background:#f5faf8; border:1px solid #dceae6; border-radius:16px; padding:14px; }
+    .mini small { color:var(--muted); display:block; margin-bottom:4px; }
+    .section { padding: 74px 0; }
+    .section h2 { font-size: clamp(30px, 4vw, 48px); line-height:1.05; letter-spacing:-.04em; margin:0 0 16px; }
+    .section p.intro { color:var(--muted); font-size:19px; max-width:780px; margin-top:0; }
+    .cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-top:32px; }
+    .card { background:white; border:1px solid var(--line); border-radius:22px; padding:24px; }
+    .card h3 { margin:0 0 10px; font-size:20px; }
+    .card p { margin:0; color:var(--muted); }
+    .flow { display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-top:32px; }
+    .step { background:white; border:1px solid var(--line); border-radius:22px; padding:24px; position:relative; }
+    .num { width:34px; height:34px; border-radius:10px; background:var(--green); color:white; display:grid; place-items:center; font-weight:900; margin-bottom:14px; }
+    .split { display:grid; grid-template-columns: .9fr 1.1fr; gap:26px; align-items:start; }
+    .list { background:white; border:1px solid var(--line); border-radius:22px; padding:24px; }
+    .list ul { margin:0; padding-left:20px; color:#43504f; }
+    .list li { margin:10px 0; }
+    .cta { background:#17362c; color:white; border-radius:30px; padding:44px; display:grid; grid-template-columns: 1.2fr auto; gap:24px; align-items:center; }
+    .cta h2 { color:white; margin:0 0 10px; }
+    .cta p { color:#cfe0db; margin:0; }
+    .cta .btn { border-color:white; background:white; color:#17362c; }
+    .footer { padding:32px 0 48px; color:var(--muted); font-size:14px; }
+    .footer a { color:var(--green-dark); font-weight:700; }
     @media (max-width: 900px) {
       .hero-grid, .split, .cta { grid-template-columns: 1fr; }
-      .three-grid { grid-template-columns: 1fr; }
-      .dashboard { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      section { padding: 46px 0; }
-      .hero { padding-top: 38px; }
+      .cards, .flow { grid-template-columns: 1fr; }
+      .nav-links { display:none; }
+      .hero { padding-top:20px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <a href="#" class="logo">Dental Recovery AI</a>
-      <nav class="nav-links">
-        <a href="#workflow">Workflow</a>
-        <a href="#use-cases">Use cases</a>
-        <a href="#guardrails">Guardrails</a>
-        <a class="button secondary" href="mailto:your@email.com">Book audit</a>
-      </nav>
-    </div>
+  <header class="wrap nav">
+    <div class="brand"><div class="logo">D</div><span>Dental Follow-Up Recovery</span></div>
+    <nav class="nav-links">
+      <a href="#workflow">Workflow</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="missed-calls.html">Missed calls</a>
+      <a href="#audit">Audit</a>
+    </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container hero-grid">
+    <section class="hero wrap">
+      <div class="hero-grid">
         <div>
-          <div class="eyebrow">AI-assisted follow-up for dental offices</div>
+          <div class="eyebrow">For dental practices with front-desk follow-up leakage</div>
           <h1>Recover the follow-ups your front desk does not have time to chase.</h1>
-          <p>Dormant patients, recall due patients, missed follow-ups, reschedule requests, and treatment-related touchpoints organized into one human-reviewed workflow.</p>
-          <div class="hero-actions">
-            <a class="button" href="mailto:your@email.com?subject=15-minute missed follow-up audit">Book a 15-minute audit</a>
-            <a class="button secondary" href="#workflow">See the workflow</a>
+          <p class="lead">An AI-assisted workflow for missed calls, overdue recalls, unscheduled treatment, reschedule requests, and patient reactivation — with human review before outreach.</p>
+          <div class="actions">
+            <a class="btn primary" href="mailto:your@email.com?subject=15-minute%20dental%20follow-up%20leak%20audit">Get a free follow-up leak audit</a>
+            <a class="btn secondary" href="#workflow">See the workflow</a>
           </div>
-          <div class="microcopy">Built for dental operations. Not clinical diagnosis. Not replacing the front desk.</div>
+          <p class="note">Built for operational follow-up. Not clinical diagnosis. Not replacing the front desk.</p>
         </div>
-
-        <div class="screen" aria-label="Dental follow-up dashboard mockup">
-          <div class="screen-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-          <div class="dashboard">
-            <div class="mini-card">
-              <div class="label">Patients needing follow-up</div>
-              <div class="value">42</div>
-            </div>
-            <div class="mini-card">
-              <div class="label">Ready for human review</div>
-              <div class="value">18</div>
-            </div>
-            <div class="mini-card wide">
-              <div class="patient-row">
-                <div><div class="patient-name">M. Carter</div><div class="patient-reason">Recall overdue · hygiene follow-up</div></div>
-                <span class="pill high">High priority</span>
-              </div>
-              <div class="patient-row">
-                <div><div class="patient-name">J. Lee</div><div class="patient-reason">Asked to reschedule · no slot confirmed</div></div>
-                <span class="pill medium">Needs review</span>
-              </div>
-              <div class="patient-row">
-                <div><div class="patient-name">A. Miller</div><div class="patient-reason">Post-visit touchpoint · message drafted</div></div>
-                <span class="pill ready">Ready</span>
-              </div>
+        <div class="mock" aria-label="Dental follow-up recovery dashboard mockup">
+          <div class="mock-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="mock-body">
+            <div class="queue-title"><strong>Follow-up recovery queue</strong><span class="tag">Human review</span></div>
+            <div class="patient"><div><b>Overdue recall</b><span>Patient has not scheduled hygiene visit after reminder window.</span></div><span class="pill">High intent</span></div>
+            <div class="patient"><div><b>Missed call</b><span>Call came during busy front-desk hours. No voicemail left.</span></div><span class="pill">New lead</span></div>
+            <div class="patient"><div><b>Unscheduled treatment</b><span>Plan presented but no next appointment booked.</span></div><span class="pill">Review</span></div>
+            <div class="review">
+              <div class="mini"><small>Suggested action</small><b>Draft outreach</b></div>
+              <div class="mini"><small>Next step</small><b>Create staff task</b></div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="workflow">
-      <div class="container">
-        <div class="section-head">
-          <h2>A simple recovery layer for everyday dental operations.</h2>
-          <p>The workflow is based on the three screens most offices need: a clean follow-up list, a human review queue, and a conversation layer that creates the next step.</p>
-        </div>
-        <div class="three-grid">
-          <div class="feature-card">
-            <div class="number">1</div>
-            <h3>Follow-up list</h3>
-            <p>Organize recall due patients, dormant patients, missed follow-ups, treatment-related touchpoints, and reschedule intent by priority.</p>
-          </div>
-          <div class="feature-card">
-            <div class="number">2</div>
-            <h3>Human review</h3>
-            <p>Show the patient context, follow-up reason, suggested message, intent level, and next action before anything goes out.</p>
-          </div>
-          <div class="feature-card">
-            <div class="number">3</div>
-            <h3>Conversation layer</h3>
-            <p>Send approved reminders, understand replies, continue scheduling conversations, and create clean handoff tasks for staff when needed.</p>
-          </div>
-        </div>
+    <section id="use-cases" class="section wrap">
+      <h2>Where dental follow-ups usually leak.</h2>
+      <p class="intro">Most missed opportunities do not happen because the team does not care. They happen because every follow-up competes with calls, check-ins, insurance questions, payments, and patients standing at the desk.</p>
+      <div class="cards">
+        <article class="card"><h3>Missed calls</h3><p>Patients call when the team is busy. If the office does not respond quickly, they may book somewhere else.</p></article>
+        <article class="card"><h3>Overdue recall</h3><p>Recall lists exist, but ownership, timing, and message quality often break down before patients schedule.</p></article>
+        <article class="card"><h3>Unscheduled treatment</h3><p>Treatment is discussed, but the follow-up path is unclear after the patient leaves.</p></article>
       </div>
     </section>
 
-    <section id="use-cases">
-      <div class="container split">
-        <div class="list-card">
-          <h3>What it helps recover</h3>
-          <ul class="check-list">
-            <li><span class="check">✓</span><span>Recall and hygiene follow-ups that sit in the PMS too long.</span></li>
-            <li><span class="check">✓</span><span>Patients who asked to reschedule but never got a clean path.</span></li>
-            <li><span class="check">✓</span><span>After-hours questions that should become a next-day task.</span></li>
-            <li><span class="check">✓</span><span>Treatment follow-ups that depend on someone remembering to call.</span></li>
-            <li><span class="check">✓</span><span>Dormant patients who need a simple, contextual reactivation message.</span></li>
-          </ul>
-        </div>
-        <div class="mock-convo">
-          <div class="bubble patient">Hi, I missed your call. Is this about my cleaning?</div>
-          <div class="bubble ai">Yes. The office wanted to help you schedule your hygiene visit. Would morning or afternoon usually work better?</div>
-          <div class="bubble patient">Afternoon, but I need to check insurance first.</div>
-          <div class="bubble ai">Got it. I’ll ask the team to confirm your insurance details before scheduling.</div>
-          <div class="handoff">
-            <strong>Clean handoff created</strong>
-            <span>Intent: recall scheduling. Barrier: insurance question. Next action: front desk review.</span>
-          </div>
-        </div>
+    <section id="workflow" class="section wrap">
+      <h2>A simple recovery layer, not another dashboard.</h2>
+      <p class="intro">The workflow turns scattered follow-up intent into a clean queue your team can review and act on.</p>
+      <div class="flow">
+        <div class="step"><div class="num">1</div><h3>Build the list</h3><p>Identify missed calls, overdue recalls, dormant patients, reschedule requests, and treatment-related follow-ups.</p></div>
+        <div class="step"><div class="num">2</div><h3>Review before outreach</h3><p>Show the reason, patient context, suggested message, intent level, and next action for staff approval.</p></div>
+        <div class="step"><div class="num">3</div><h3>Hand off cleanly</h3><p>Support patient replies, flag sensitive cases, and create a clear next step when the front desk needs to intervene.</p></div>
       </div>
     </section>
 
-    <section id="guardrails">
-      <div class="container split">
-        <div class="list-card">
-          <h3>What it does</h3>
-          <ul class="check-list">
-            <li><span class="check">✓</span><span>Drafts patient outreach based on approved visit context.</span></li>
-            <li><span class="check">✓</span><span>Flags urgent, unclear, or sensitive replies for staff.</span></li>
-            <li><span class="check">✓</span><span>Keeps the team in control before messages are sent.</span></li>
-            <li><span class="check">✓</span><span>Turns messy follow-up work into a repeatable workflow.</span></li>
-          </ul>
+    <section class="section wrap">
+      <div class="split">
+        <div>
+          <h2>What it handles — and what it does not.</h2>
+          <p class="intro">The point is operational recovery, not clinical decision-making.</p>
         </div>
-        <div class="list-card">
-          <h3>What it does not do</h3>
-          <ul class="check-list">
-            <li><span class="x">×</span><span>It does not diagnose patients.</span></li>
-            <li><span class="x">×</span><span>It does not replace clinical judgment.</span></li>
-            <li><span class="x">×</span><span>It does not blindly message patients without staff control.</span></li>
-            <li><span class="x">×</span><span>It does not replace the front desk. It recovers work that gets lost.</span></li>
+        <div class="list">
+          <ul>
+            <li>Handles missed-call text-back, recall outreach, treatment follow-up, reactivation, and reschedule routing.</li>
+            <li>Uses human review before outreach when patient context or message sensitivity matters.</li>
+            <li>Does not diagnose, prescribe, or replace clinical judgment.</li>
+            <li>Does not require your team to change the entire front-desk process on day one.</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <section>
-      <div class="container">
-        <div class="cta">
-          <div>
-            <h2>Want to see where follow-up is leaking in your office?</h2>
-            <p>Send a note and I’ll map a simple missed follow-up recovery workflow for your dental office.</p>
-          </div>
-          <a class="button" href="mailto:your@email.com?subject=Dental follow-up recovery audit">Book audit</a>
+    <section id="audit" class="section wrap">
+      <div class="cta">
+        <div>
+          <h2>Start with a 15-minute follow-up leak audit.</h2>
+          <p>Send a sample of missed calls, overdue recall categories, or treatment follow-up gaps. I will map where the recovery workflow should start.</p>
         </div>
+        <a class="btn" href="mailto:your@email.com?subject=15-minute%20dental%20follow-up%20leak%20audit">Request audit</a>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="container">
-      © 2026 Dental Recovery AI. Mock patient data shown for demonstration only.
-    </div>
+  <footer class="wrap footer">
+    <p>Dental Follow-Up Recovery · AI-assisted front-desk workflow for dental practices · <a href="missed-calls.html">Read: missed call recovery</a></p>
   </footer>
 </body>
 </html>

@@ -1,16 +1,33 @@
 # Dental Follow-Up Recovery Landing Page
 
-A single-file static landing page for a dental AI follow-up workflow.
+Static GitHub Pages site for a dental AI follow-up recovery landing page.
 
-## Deploy with GitHub Pages
+## Files
 
-1. Create a new GitHub repository.
-2. Upload `index.html` to the repository root.
-3. Go to `Settings` → `Pages`.
-4. Under `Build and deployment`, choose `Deploy from a branch`.
-5. Select the `main` branch and `/root` folder.
-6. Save. GitHub will generate a `github.io` URL.
+- `index.html` — landing page with SEO metadata and LinkedIn preview tags
+- `missed-calls.html` — first SEO article page
+- `og-image.png` — LinkedIn/Twitter preview image
+- `robots.txt` — crawler instructions
+- `sitemap.xml` — sitemap for Google Search Console
 
-## Before publishing
+## Deployment
 
-Replace `your@email.com` in `index.html` with your actual email or Calendly link.
+Upload all files to the root of the existing GitHub repository:
+
+`yamada0036/dental-followup-landing-page`
+
+GitHub Pages should remain configured as:
+
+- Source: Deploy from a branch
+- Branch: main
+- Folder: / root
+
+After committing the updated files, GitHub Pages will redeploy automatically.
+
+Live URL:
+
+https://yamada0036.github.io/dental-followup-landing-page/
+
+## Important edits
+
+Before publishing seriously, replace every `your@email.com` in `index.html` and `missed-calls.html` with your real email or Calendly link.
