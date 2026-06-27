@@ -1,0 +1,44 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#07101f"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07101f"/>
+      <stop offset="0.52" stop-color="#08152b"/>
+      <stop offset="1" stop-color="#180f3a"/>
+    </linearGradient>
+    <radialGradient id="r1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1430 280) rotate(128) scale(760 480)">
+      <stop stop-color="#3b82f6" stop-opacity="0.34"/>
+      <stop offset="0.58" stop-color="#4f46e5" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="r2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(420 180) rotate(45) scale(420 320)">
+      <stop stop-color="#22d3ee" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#g)"/>
+  <rect width="1920" height="1080" fill="url(#r1)"/>
+  <rect width="1920" height="1080" fill="url(#r2)"/>
+  <g opacity="0.20" stroke="#7dd3fc" stroke-width="1">
+    <path d="M0 170H1920"/><path d="M0 330H1920"/><path d="M0 490H1920"/><path d="M0 650H1920"/><path d="M0 810H1920"/>
+    <path d="M180 0V1080"/><path d="M360 0V1080"/><path d="M540 0V1080"/><path d="M720 0V1080"/><path d="M900 0V1080"/><path d="M1080 0V1080"/><path d="M1260 0V1080"/><path d="M1440 0V1080"/><path d="M1620 0V1080"/>
+  </g>
+  <g opacity="0.18" filter="url(#blur)" stroke="#dbeafe" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1050 655C1180 565 1395 540 1535 580C1630 608 1675 668 1645 735C1602 830 1370 858 1202 810C1074 773 1000 720 1050 655Z"/>
+    <path d="M1168 626C1232 594 1355 585 1442 604C1506 618 1542 653 1526 690C1504 745 1354 765 1242 738C1162 719 1125 650 1168 626Z"/>
+    <path d="M1395 764L1485 925"/>
+    <path d="M1235 742L1175 910"/>
+    <path d="M1070 782H1540"/>
+    <path d="M1500 390V660"/>
+    <path d="M1535 385V660"/>
+    <path d="M1570 396V665"/>
+    <path d="M1470 386C1512 352 1562 352 1604 386"/>
+  </g>
+  <g opacity="0.08" fill="#ffffff">
+    <circle cx="1488" cy="356" r="76"/>
+    <rect x="1458" y="398" width="61" height="262" rx="30"/>
+  </g>
+</svg>
