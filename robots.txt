@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://yamada0036.github.io/dental-followup-landing-page/sitemap.xml
+Sitemap: https://dental-followup-landing-page.vercel.app/sitemap.xml

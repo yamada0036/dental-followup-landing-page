@@ -4,51 +4,57 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Praxora.ai | AI Revenue Recovery for Dental Practices</title>
-  <meta name="description" content="Praxora.ai helps dental practices recover missed revenue from missed calls, unscheduled treatments, overdue recalls, and dormant patients with reviewed AI workflows." />
-  <meta name="robots" content="index, follow" />
-  <meta property="og:type" content="website" />
+  <meta name="description" content="Praxora helps dental practices recover missed revenue from missed calls, unscheduled treatment, overdue recalls, dormant patients, and front desk follow-up gaps." />
+  <link rel="canonical" href="https://dental-followup-landing-page.vercel.app/" />
   <meta property="og:title" content="Praxora.ai | AI Revenue Recovery for Dental Practices" />
-  <meta property="og:description" content="Recover missed calls, unscheduled treatments, overdue recalls, and dormant patient opportunities with reviewed AI workflows." />
+  <meta property="og:description" content="Recover revenue your practice already earned from missed calls, unscheduled treatment, recalls, and follow-up gaps." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dental-followup-landing-page.vercel.app/" />
+  <meta property="og:image" content="https://dental-followup-landing-page.vercel.app/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;760;850;900;950&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header" id="siteHeader">
-    <a class="brand" href="#top" aria-label="Praxora.ai home">
-      <img src="assets/praxora-icon.png" alt="" />
-      <span>Praxora<span>.ai</span></span>
+    <a class="brand" href="index.html" aria-label="Praxora home">
+      <img src="assets/praxora-logo.png" alt="Praxora logo" />
+      <span>Praxora <span>.ai</span></span>
     </a>
-    <nav class="nav-links" aria-label="Primary navigation">
+    <nav class="nav-links" aria-label="Main navigation">
       <a href="#platforms">Platforms</a>
       <a href="#recover">What we recover</a>
       <a href="#workflow">Workflow</a>
-      <a href="#audit">Audit</a>
+      <a href="#teardowns">Teardowns</a>
+      <a href="free-missed-revenue-audit.html">Free Audit</a>
     </nav>
-    <a class="nav-cta" href="#audit">Request audit</a>
+    <a class="nav-cta" href="free-missed-revenue-audit.html">Request audit</a>
   </header>
 
-  <main id="top">
-    <section class="hero" aria-label="Praxora.ai revenue recovery hero">
+  <main>
+    <section class="hero">
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="hero-noise" aria-hidden="true"></div>
       <div class="hero-glow one" aria-hidden="true"></div>
       <div class="hero-glow two" aria-hidden="true"></div>
-
       <div class="hero-content reveal">
-        <div class="eyebrow"><span></span> AI revenue recovery for dental practices</div>
+        <div class="eyebrow"><span></span>AI revenue recovery for dental practices</div>
         <h1>Recover revenue your practice already earned.</h1>
         <p class="hero-copy">Praxora turns missed calls, unscheduled treatments, overdue recalls, and dormant patients into reviewed follow-ups and booked appointments.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#audit">Request free audit</a>
-          <a class="button ghost" href="#workflow">See the workflow</a>
+          <a class="button primary" href="free-missed-revenue-audit.html">Get a Free Missed Revenue Audit</a>
+          <a class="button ghost" href="#teardowns">View workflow teardowns</a>
         </div>
       </div>
 
-      <div class="platform-strip" id="platforms" aria-label="Supported platform examples">
+      <div class="platform-strip" id="platforms">
         <p>Integrates with platforms your practice already uses</p>
         <div class="marquee" aria-hidden="true">
           <div class="marquee-track">
-            <span>Open Dental</span><span>Dentrix</span><span>Eaglesoft</span><span>Cloud 9</span><span>Denticon</span><span>Curve Dental</span><span>CareStack</span><span>Open Dental</span><span>Dentrix</span><span>Eaglesoft</span><span>Cloud 9</span><span>Denticon</span><span>Curve Dental</span><span>CareStack</span>
+            <span>Open Dental</span><span>Dentrix</span><span>Eaglesoft</span><span>Cloud 9</span><span>Denticon</span><span>Curve Dental</span><span>CareStack</span>
+            <span>Open Dental</span><span>Dentrix</span><span>Eaglesoft</span><span>Cloud 9</span><span>Denticon</span><span>Curve Dental</span><span>CareStack</span>
           </div>
         </div>
       </div>
@@ -91,27 +97,55 @@
           <h2>From signal to scheduled visit.</h2>
           <p>Praxora is an action layer for patient operations. It finds missed opportunities, prepares the next step, and keeps your team in control before outreach goes out.</p>
         </div>
-        <div class="steps reveal delay-1">
-          <div class="step"><strong>Detect</strong><span>Missed calls, unscheduled treatment, recall gaps, inactive patients.</span></div>
-          <div class="step"><strong>Review</strong><span>AI-drafted follow-ups and staff tasks stay under human control.</span></div>
-          <div class="step"><strong>Recover</strong><span>Interested patients are routed back toward booking and tracked.</span></div>
+        <div class="steps">
+          <div class="step reveal delay-1"><strong>Detect</strong><span>Missed calls, unscheduled treatment, recall gaps, inactive patients.</span></div>
+          <div class="step reveal delay-2"><strong>Review</strong><span>AI-drafted follow-ups and staff tasks stay under human control.</span></div>
+          <div class="step reveal delay-3"><strong>Recover</strong><span>Interested patients are routed back toward booking and tracked.</span></div>
         </div>
       </div>
     </section>
 
     <section class="section scenario">
-      <div class="scenario-card reveal">
-        <div class="scenario-copy">
+      <div class="scenario-card">
+        <div class="scenario-copy reveal">
           <span class="section-kicker">Example scenario</span>
           <h2>A missed call at lunch should not become lost revenue.</h2>
           <p>When the front desk is busy, Praxora can turn the missed signal into a reviewed text-back and a clear staff task.</p>
         </div>
-        <div class="timeline" aria-label="Example missed call workflow">
-          <div><span>12:14 PM</span><strong>Patient call missed</strong><p>New patient inquiry appears in phone log.</p></div>
-          <div><span>12:16 PM</span><strong>Follow-up drafted</strong><p>Praxora prepares a text-back and routes it for review.</p></div>
-          <div><span>12:21 PM</span><strong>Patient replies</strong><p>Intent is captured and the next action is assigned.</p></div>
-          <div><span>Booked</span><strong>Visit scheduled</strong><p>The recovered opportunity is attributed to the workflow.</p></div>
+        <div class="timeline">
+          <div class="reveal delay-1"><span>12:14 PM</span><strong>Patient call missed</strong><p>New patient inquiry appears in phone log.</p></div>
+          <div class="reveal delay-2"><span>12:16 PM</span><strong>Follow-up drafted</strong><p>Praxora prepares a text-back and routes it for review.</p></div>
+          <div class="reveal delay-3"><span>12:21 PM</span><strong>Patient replies</strong><p>Intent is captured and the next action is assigned.</p></div>
+          <div class="reveal delay-4"><span>Booked</span><strong>Visit scheduled</strong><p>The recovered opportunity is attributed to the workflow.</p></div>
         </div>
+      </div>
+    </section>
+
+    <section class="section recovery" id="teardowns">
+      <div class="section-head reveal">
+        <span class="section-kicker">Workflow teardowns</span>
+        <h2>See how revenue leakage happens inside dental workflows.</h2>
+        <p>These example teardowns show how missed calls, recall gaps, and unscheduled treatment plans can quietly turn into lost revenue.</p>
+      </div>
+      <div class="teardown-grid">
+        <article class="teardown-card reveal delay-1">
+          <span>01</span>
+          <h3>Missed implant consult</h3>
+          <p>How one high-value implant inquiry can disappear when the front desk is busy and the recovery step is unclear.</p>
+          <a href="workflow-missed-implant-consult.html">Read teardown →</a>
+        </article>
+        <article class="teardown-card reveal delay-2">
+          <span>02</span>
+          <h3>Recall leakage</h3>
+          <p>How overdue recall patients leak from a 3-chair dental practice when follow-up is manual and unowned.</p>
+          <a href="workflow-recall-leakage.html">Read teardown →</a>
+        </article>
+        <article class="teardown-card reveal delay-3">
+          <span>03</span>
+          <h3>Unscheduled treatment</h3>
+          <p>How to follow up on unscheduled treatment plans in a respectful way that does not annoy patients.</p>
+          <a href="workflow-unscheduled-treatment.html">Read teardown →</a>
+        </article>
       </div>
     </section>
 
@@ -121,12 +155,12 @@
         <h2>Measure recovery, not activity.</h2>
         <p>Your team should know which opportunities were found, who responded, and what turned into booked visits.</p>
       </div>
-      <div class="outcome-grid reveal delay-1">
-        <div><strong>31</strong><span>Example replies</span></div>
-        <div><strong>14</strong><span>Example booked visits</span></div>
-        <div><strong>$18.6k</strong><span>Example recovered pipeline</span></div>
+      <div class="outcome-grid">
+        <div class="reveal delay-1"><strong>31</strong><span>Example replies</span></div>
+        <div class="reveal delay-2"><strong>14</strong><span>Example booked visits</span></div>
+        <div class="reveal delay-3"><strong>$18.6k</strong><span>Example recovered pipeline</span></div>
       </div>
-      <p class="metric-disclaimer reveal delay-2">Example metrics only. Actual recovery depends on practice volume, patient mix, systems, and review workflows.</p>
+      <p class="metric-disclaimer">Example metrics only. Actual recovery depends on practice volume, patient mix, systems, and review workflows.</p>
     </section>
 
     <section class="section compliance">
@@ -134,7 +168,12 @@
         <span class="section-kicker">Clinical boundary</span>
         <h2>Operational AI, not clinical diagnosis.</h2>
         <p>Praxora does not diagnose, prescribe, or replace clinical judgment. It helps dental teams organize follow-up, scheduling, patient communication, and revenue recovery workflows.</p>
-        <div class="compliance-pills"><span>Human review</span><span>Operational workflows</span><span>Controlled communication</span></div>
+        <div class="compliance-pills">
+          <span>No diagnosis</span>
+          <span>Human review</span>
+          <span>Operational workflows</span>
+          <span>Controlled communication</span>
+        </div>
       </div>
     </section>
 
@@ -143,35 +182,28 @@
         <div>
           <span class="section-kicker">Free audit</span>
           <h2>See where revenue is leaking in your practice.</h2>
-          <p>Send a sample of operational signals: missed calls, unscheduled treatment gaps, overdue recalls, or dormant patient lists. We’ll map the first recovery workflow to launch.</p>
-          <p class="note">No clinical data required to start. Anonymized operational samples are enough for the first review.</p>
+          <p>Request a free missed revenue audit. We review missed calls, unscheduled treatment, overdue recalls, dormant patients, and front desk follow-up gaps, then send a simple recovery plan in 48 hours.</p>
+          <p class="note">No clinical data required to start. Anonymized operational examples are enough for the first review.</p>
         </div>
-        <form class="audit-form" id="auditForm">
-          <label>Name<input name="name" autocomplete="name" required /></label>
-          <label>Work email<input type="email" name="email" autocomplete="email" required /></label>
-          <label>Practice website<input type="url" name="website" placeholder="https://" /></label>
-          <label>First recovery focus
-            <select name="focus" required>
-              <option value="">Select one</option>
-              <option>Missed calls</option>
-              <option>Unscheduled treatment</option>
-              <option>Overdue recall</option>
-              <option>Dormant patients</option>
-              <option>Not sure yet</option>
-            </select>
-          </label>
-          <button type="submit">Request free audit</button>
-          <p class="success" id="successMessage">Thanks — we’ll review your request and follow up with next steps.</p>
-        </form>
+        <div class="form-card">
+          <div class="fake-field">Name</div>
+          <div class="fake-field">Work email</div>
+          <div class="fake-field">Practice website</div>
+          <div class="fake-field">First recovery focus</div>
+          <a class="button primary" href="https://tally.so/r/YOUR_FORM_ID" target="_blank" rel="noopener">Request free audit</a>
+          <p class="note">TODO: replace this Tally placeholder with your real form or Calendly link.</p>
+        </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <a class="brand small" href="#top" aria-label="Praxora.ai home">
-      <img src="assets/praxora-icon.png" alt="" />
-      <span>Praxora<span>.ai</span></span>
-    </a>
+    <a class="brand small" href="index.html"><img src="assets/praxora-logo.png" alt="Praxora logo" /><span>Praxora <span>.ai</span></span></a>
+    <div class="footer-links">
+      <a href="free-missed-revenue-audit.html">Free Audit</a>
+      <a href="workflow-missed-implant-consult.html">Teardowns</a>
+      <a href="missed-calls.html">Missed calls article</a>
+    </div>
     <p>AI revenue recovery for dental practices.</p>
   </footer>
 

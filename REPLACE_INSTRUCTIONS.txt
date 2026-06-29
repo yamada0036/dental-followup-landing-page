@@ -1,0 +1,32 @@
+Replace / add these files in the GitHub repo root:
+
+1. Replace:
+   - index.html
+   - styles.css
+   - script.js
+   - sitemap.xml
+   - README.md
+
+2. Add:
+   - free-missed-revenue-audit.html
+   - workflow-missed-implant-consult.html
+   - workflow-recall-leakage.html
+   - workflow-unscheduled-treatment.html
+
+3. Keep existing files/folders:
+   - assets/
+   - missed-calls.html
+   - og-image.png
+   - robots.txt
+   - .nojekyll
+   - googlea050d084b5f189f3.html or any Google verification file
+
+4. After upload, replace all:
+   https://tally.so/r/YOUR_FORM_ID
+   with your real Tally or Calendly link.
+
+
+Vercel domain configured in this package:
+https://dental-followup-landing-page.vercel.app
+
+This package updates canonical URLs, Open Graph URLs, sitemap.xml, and robots.txt for the Vercel domain.
