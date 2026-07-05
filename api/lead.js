@@ -5,16 +5,17 @@
   cleanString,
   normalizeEmail,
   isValidEmail,
-  safeInteger,
   requireMethod,
   getUtmFields,
   insertSupabase,
   updateSupabase,
+  enforceRateLimit,
   sendEmail,
   formatCurrency,
   leakDisplayNames,
   leakDiagnoses
 } = require('./_utils');
+const { normalizeCalculatorInputs, calculateResults } = require('./_calculator');
 
 function buildBreakdownEmail(lead) {
   const largestLeakName = leakDisplayNames[lead.largest_leak] || 'Follow-Up Leakage';
@@ -62,8 +63,22 @@ Yamada
 Founder, Praxora`;
 }
 
+async function enrollLeadInRecoverySequence() {
+  return { enrolled: false, reason: 'provider_not_configured' };
+}
+
 module.exports = async function handler(req, res) {
   if (!requireMethod(req, res)) return;
+
+  try {
+    const rateLimit = await enforceRateLimit(req, 'lead');
+    if (!rateLimit.allowed) {
+      return sendJson(res, 429, { success: false, error: 'Too many requests. Please try again later.' });
+    }
+  } catch (error) {
+    console.error('Calculator rate limit failed', error);
+    return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+  }
 
   let payload;
   try {
@@ -74,7 +89,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (cleanString(payload.company_website, 200)) {
-    return sendJson(res, 200, { success: true, email_sent: false });
+    return sendJson(res, 200, { success: true, email_sent: false, results: null });
   }
 
   const firstName = cleanString(payload.first_name, MAX_LENGTHS.first_name);
@@ -83,26 +98,45 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 400, { success: false, error: 'Unable to process your request.' });
   }
 
+  let inputs;
+  let results;
+  try {
+    inputs = normalizeCalculatorInputs(payload);
+    results = calculateResults(inputs);
+  } catch (error) {
+    console.error('Calculator validation failed', error.message);
+    return sendJson(res, 400, { success: false, error: 'Unable to process your request.' });
+  }
+
+  const sequence = await enrollLeadInRecoverySequence();
   const lead = {
     created_at: new Date().toISOString(),
     first_name: firstName,
     email,
     practice_name: cleanString(payload.practice_name, MAX_LENGTHS.practice_name),
     source: 'revenue_leak_calculator',
-    largest_leak: cleanString(payload.largest_leak, MAX_LENGTHS.key),
-    missed_call_score: safeInteger(payload.missed_call_score),
-    unscheduled_treatment_score: safeInteger(payload.unscheduled_treatment_score),
-    recall_score: safeInteger(payload.recall_score),
-    missed_call_opportunity: safeInteger(payload.missed_call_opportunity),
-    unscheduled_treatment_opportunity: safeInteger(payload.unscheduled_treatment_opportunity),
-    recall_opportunity: safeInteger(payload.recall_opportunity),
-    daily_calls: safeInteger(payload.daily_calls),
-    missed_call_rate: cleanString(payload.missed_call_rate, MAX_LENGTHS.key),
-    missed_call_followup_rate: cleanString(payload.missed_call_followup_rate, MAX_LENGTHS.key),
-    unscheduled_followup_process: cleanString(payload.unscheduled_followup_process, MAX_LENGTHS.key),
-    recall_workflow_status: cleanString(payload.recall_workflow_status, MAX_LENGTHS.key),
+    largest_leak: results.largest_leak,
+    missed_call_score: results.missed_call_score,
+    unscheduled_treatment_score: results.unscheduled_treatment_score,
+    recall_score: results.recall_score,
+    missed_call_opportunity: results.missed_call_opportunity,
+    unscheduled_treatment_opportunity: results.unscheduled_treatment_opportunity,
+    recall_opportunity: results.recall_opportunity,
+    daily_calls: inputs.daily_calls,
+    missed_call_rate: inputs.missed_call_rate,
+    missed_call_followup_rate: inputs.missed_call_followup_rate,
+    average_new_patient_value: inputs.average_new_patient_value,
+    knows_unscheduled_value: inputs.knows_unscheduled_value,
+    unscheduled_treatment_value: inputs.unscheduled_treatment_value,
+    unscheduled_patient_count: inputs.unscheduled_patient_count,
+    average_treatment_value: inputs.average_treatment_value,
+    unscheduled_followup_process: inputs.unscheduled_followup_process,
+    overdue_recall_count: inputs.overdue_recall_count,
+    average_recall_value: inputs.average_recall_value,
+    recall_workflow_status: inputs.recall_workflow_status,
     ...getUtmFields(payload),
-    email_status: 'pending'
+    email_status: 'pending',
+    sequence_status: sequence.enrolled ? 'enrolled' : 'not_enrolled'
   };
 
   try {
@@ -120,7 +154,7 @@ module.exports = async function handler(req, res) {
       console.error('Calculator email failed', emailError);
       await updateSupabase('leads', stored && stored.id, { email_status: 'failed' });
     }
-    return sendJson(res, 200, { success: true, email_sent: emailSent });
+    return sendJson(res, 200, { success: true, email_sent: emailSent, results });
   } catch (error) {
     console.error('Calculator lead failed', error);
     return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });

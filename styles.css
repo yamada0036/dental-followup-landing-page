@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --navy: #050917;
   --navy-2: #090f24;
   --navy-3: #071123;
@@ -554,7 +554,7 @@ h4 {
   .reveal { opacity: 1; transform: none; }
 }
 
-/* GTM refactor additions */
+/* Funnel refactor additions */
 .microcopy {
   margin: 18px auto 0;
   color: #a8f0ff;
@@ -701,3 +701,4 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .success-panel p { color: var(--muted); margin: 0; }
 .checklist { list-style: none; padding-left: 0 !important; }
 .checklist li { font-weight: 800; }
+

@@ -1,4 +1,6 @@
-﻿const MAX_LENGTHS = {
+﻿const crypto = require('crypto');
+
+const MAX_LENGTHS = {
   name: 120,
   first_name: 80,
   email: 254,
@@ -69,17 +71,27 @@ function supabaseConfig() {
   };
 }
 
-async function insertSupabase(table, record) {
+function supabaseBaseUrl() {
   const config = supabaseConfig();
   if (!config.url || !config.key) throw new Error('Supabase environment variables are missing.');
-  const response = await fetch(`${config.url.replace(/\/$/, '')}/rest/v1/${table}`, {
+  return { baseUrl: config.url.replace(/\/$/, ''), key: config.key };
+}
+
+function supabaseHeaders(extra = {}) {
+  const { key } = supabaseBaseUrl();
+  return {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    'Content-Type': 'application/json',
+    ...extra
+  };
+}
+
+async function insertSupabase(table, record) {
+  const { baseUrl } = supabaseBaseUrl();
+  const response = await fetch(`${baseUrl}/rest/v1/${table}`, {
     method: 'POST',
-    headers: {
-      apikey: config.key,
-      Authorization: `Bearer ${config.key}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation'
-    },
+    headers: supabaseHeaders({ Prefer: 'return=representation' }),
     body: JSON.stringify(record)
   });
   const text = await response.text();
@@ -91,21 +103,64 @@ async function insertSupabase(table, record) {
 }
 
 async function updateSupabase(table, id, patch) {
-  const config = supabaseConfig();
-  if (!config.url || !config.key || !id) return;
-  const response = await fetch(`${config.url.replace(/\/$/, '')}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
+  if (!id) return;
+  const { baseUrl } = supabaseBaseUrl();
+  const response = await fetch(`${baseUrl}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
-    headers: {
-      apikey: config.key,
-      Authorization: `Bearer ${config.key}`,
-      'Content-Type': 'application/json'
-    },
+    headers: supabaseHeaders(),
     body: JSON.stringify(patch)
   });
   if (!response.ok) {
     const text = await response.text();
     console.error('Supabase update failed', { table, status: response.status, body: text });
   }
+}
+
+async function selectSupabase(table, query) {
+  const { baseUrl } = supabaseBaseUrl();
+  const response = await fetch(`${baseUrl}/rest/v1/${table}?${query}`, {
+    method: 'GET',
+    headers: supabaseHeaders()
+  });
+  const text = await response.text();
+  if (!response.ok) {
+    console.error('Supabase select failed', { table, status: response.status, body: text });
+    throw new Error('Supabase select failed.');
+  }
+  return JSON.parse(text || '[]');
+}
+
+function getRequestIp(req) {
+  const forwarded = cleanString(req.headers && (req.headers['x-forwarded-for'] || req.headers['X-Forwarded-For']), 300);
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return cleanString(req.headers && (req.headers['x-real-ip'] || req.headers['X-Real-IP']), 120) || cleanString(req.socket && req.socket.remoteAddress, 120) || 'unknown';
+}
+
+function hashRequestIp(ip) {
+  const salt = process.env.RATE_LIMIT_SALT;
+  if (!salt) throw new Error('RATE_LIMIT_SALT is missing.');
+  return crypto.createHash('sha256').update(`${salt}:${ip}`).digest('hex');
+}
+
+async function enforceRateLimit(req, endpoint) {
+  const requestHash = hashRequestIp(getRequestIp(req));
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const query = new URLSearchParams({
+    select: 'id',
+    request_hash: `eq.${requestHash}`,
+    endpoint: `eq.${endpoint}`,
+    created_at: `gte.${tenMinutesAgo}`
+  }).toString();
+  const recent = await selectSupabase('submission_rate_limits', query);
+  if (recent.length >= 5) {
+    return { allowed: false };
+  }
+  await insertSupabase('submission_rate_limits', {
+    request_hash: requestHash,
+    endpoint,
+    created_at: new Date().toISOString()
+  });
+  return { allowed: true };
 }
 
 async function sendEmail({ to, subject, text }) {
@@ -151,11 +206,14 @@ module.exports = {
   cleanString,
   normalizeEmail,
   isValidEmail,
+  safeNumber,
   safeInteger,
   requireMethod,
   getUtmFields,
   insertSupabase,
   updateSupabase,
+  selectSupabase,
+  enforceRateLimit,
   sendEmail,
   formatCurrency,
   leakDisplayNames,

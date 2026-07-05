@@ -158,14 +158,29 @@ async function submitLead(payload) {
 function leadPayload(form) {
   const formData = new FormData(form);
   return {
-    first_name: formData.get('first_name') || '', email: formData.get('email') || '', practice_name: formData.get('practice_name') || '', company_website: formData.get('company_website') || '', source: 'revenue_leak_calculator', largest_leak: calculatorState.results.largestLeak,
-    missed_call_score: calculatorState.results.missedCallScore, unscheduled_treatment_score: calculatorState.results.unscheduledTreatmentScore, recall_score: calculatorState.results.recallScore,
-    missed_call_opportunity: Math.round(calculatorState.results.missedCallOpportunity), unscheduled_treatment_opportunity: Math.round(calculatorState.results.unscheduledTreatmentOpportunity), recall_opportunity: Math.round(calculatorState.results.recallOpportunity),
-    daily_calls: calculatorState.dailyCalls, missed_call_rate: calculatorState.missedCallRateKey, missed_call_followup_rate: calculatorState.missedCallFollowupKey, unscheduled_followup_process: calculatorState.unscheduledFollowupProcess, recall_workflow_status: calculatorState.recallWorkflowStatus,
-    utm_source: calculatorState.utm.utm_source || '', utm_medium: calculatorState.utm.utm_medium || '', utm_campaign: calculatorState.utm.utm_campaign || '', utm_content: calculatorState.utm.utm_content || ''
+    first_name: formData.get('first_name') || '',
+    email: formData.get('email') || '',
+    practice_name: formData.get('practice_name') || '',
+    company_website: formData.get('company_website') || '',
+    source: 'revenue_leak_calculator',
+    daily_calls: calculatorState.dailyCalls,
+    missed_call_rate: calculatorState.missedCallRateKey,
+    missed_call_followup_rate: calculatorState.missedCallFollowupKey,
+    average_new_patient_value: calculatorState.averageNewPatientValue,
+    knows_unscheduled_value: calculatorState.knowsUnscheduledValue,
+    unscheduled_treatment_value: calculatorState.unscheduledTreatmentValue,
+    unscheduled_patient_count: calculatorState.unscheduledPatientCount,
+    average_treatment_value: calculatorState.averageTreatmentValue,
+    unscheduled_followup_process: calculatorState.unscheduledFollowupProcess,
+    overdue_recall_count: calculatorState.overdueRecallCount,
+    average_recall_value: calculatorState.averageRecallValue,
+    recall_workflow_status: calculatorState.recallWorkflowStatus,
+    utm_source: calculatorState.utm.utm_source || '',
+    utm_medium: calculatorState.utm.utm_medium || '',
+    utm_campaign: calculatorState.utm.utm_campaign || '',
+    utm_content: calculatorState.utm.utm_content || ''
   };
 }
-
 function showStep(step) { document.querySelectorAll('.calc-step').forEach((node) => node.classList.toggle('active', node.dataset.step === String(step))); document.querySelectorAll('[data-progress]').forEach((node) => node.classList.toggle('active', Number(node.dataset.progress) <= step)); }
 
 function largestLeakEventName() { if (calculatorState.results.largestLeak === 'missed_calls') return 'calculator_largest_leak_missed_call'; if (calculatorState.results.largestLeak === 'unscheduled_treatment') return 'calculator_largest_leak_unscheduled_treatment'; return 'calculator_largest_leak_recall'; }
@@ -188,6 +203,29 @@ function initCalculator() {
     try {
       safeTrack('calculator_email_submit', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
       const result = await submitLead(leadPayload(form));
+      if (result.results) {
+        const localResults = {
+          missed_call_opportunity: Math.round(calculatorState.results.missedCallOpportunity),
+          unscheduled_treatment_opportunity: Math.round(calculatorState.results.unscheduledTreatmentOpportunity),
+          recall_opportunity: Math.round(calculatorState.results.recallOpportunity),
+          missed_call_score: calculatorState.results.missedCallScore,
+          unscheduled_treatment_score: calculatorState.results.unscheduledTreatmentScore,
+          recall_score: calculatorState.results.recallScore,
+          largest_leak: calculatorState.results.largestLeak
+        };
+        const mismatch = Object.keys(result.results).some((key) => result.results[key] !== localResults[key]);
+        if (mismatch) {
+          console.warn('Calculator frontend/server result mismatch', { localResults, serverResults: result.results });
+          calculatorState.results.missedCallOpportunity = result.results.missed_call_opportunity;
+          calculatorState.results.unscheduledTreatmentOpportunity = result.results.unscheduled_treatment_opportunity;
+          calculatorState.results.recallOpportunity = result.results.recall_opportunity;
+          calculatorState.results.missedCallScore = result.results.missed_call_score;
+          calculatorState.results.unscheduledTreatmentScore = result.results.unscheduled_treatment_score;
+          calculatorState.results.recallScore = result.results.recall_score;
+          calculatorState.results.largestLeak = result.results.largest_leak;
+          renderResults();
+        }
+      }
       if (result.email_sent) {
         form.innerHTML = '<div class="success-panel"><h2>Your Recovery Breakdown Is on the Way</h2><p>We have sent your follow-up leakage breakdown and recovery resources to your email.</p><div class="form-actions"><a class="button primary" href="/follow-up-recovery-kit/">View the Recovery Kit</a><a class="button ghost" href="/free-missed-revenue-audit.html">Get a Free Follow-Up Leak Review</a></div></div>';
       } else {
@@ -203,3 +241,5 @@ function initCalculator() {
 }
 
 initCalculator();
+
+

@@ -143,7 +143,13 @@ function bindLeakReviewForm() {
       if (!response.ok || !result.success) throw new Error('Submission failed.');
       form.hidden = true;
       const success = document.getElementById('leakReviewSuccess');
-      if (success) success.hidden = false;
+      if (success) {
+        success.hidden = false;
+        const emailNotice = success.querySelector('[data-requester-email-status]');
+        if (emailNotice && result.requester_email_sent === false) {
+          emailNotice.hidden = false;
+        }
+      }
       trackEvent('leak_review_submit_success', getStoredUtmParameters());
     } catch (error) {
       status.innerHTML = '<strong>We could not submit your review request right now.</strong><br>Please try again.';
@@ -164,3 +170,5 @@ document.querySelectorAll('[data-track]').forEach((node) => {
 if (document.body.dataset.page === 'recovery-kit') {
   trackEvent('recovery_kit_view', getStoredUtmParameters());
 }
+
+

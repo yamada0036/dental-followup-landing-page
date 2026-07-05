@@ -9,6 +9,8 @@
   requireMethod,
   getUtmFields,
   insertSupabase,
+  updateSupabase,
+  enforceRateLimit,
   sendEmail
 } = require('./_utils');
 
@@ -55,6 +57,16 @@ Founder, Praxora`;
 module.exports = async function handler(req, res) {
   if (!requireMethod(req, res)) return;
 
+  try {
+    const rateLimit = await enforceRateLimit(req, 'leak-review');
+    if (!rateLimit.allowed) {
+      return sendJson(res, 429, { success: false, error: 'Too many requests. Please try again later.' });
+    }
+  } catch (error) {
+    console.error('Leak review rate limit failed', error);
+    return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+  }
+
   let payload;
   try {
     payload = await readJson(req);
@@ -64,7 +76,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (cleanString(payload.company_website, 200)) {
-    return sendJson(res, 200, { success: true, email_sent: false });
+    return sendJson(res, 200, { success: true, founder_email_sent: false, requester_email_sent: false });
   }
 
   const name = cleanString(payload.name, MAX_LENGTHS.name);
@@ -87,25 +99,51 @@ module.exports = async function handler(req, res) {
     most_frustrating_workflow: cleanString(payload.most_frustrating_workflow, MAX_LENGTHS.text),
     ...getUtmFields(payload),
     review_status: 'new',
+    founder_email_status: 'pending',
+    requester_email_status: 'pending',
     notes: ''
   };
 
   try {
-    await insertSupabase('leak_reviews', review);
-    let emailSent = false;
+    const stored = await insertSupabase('leak_reviews', review);
+    let founderEmailSent = false;
+    let requesterEmailSent = false;
+
     try {
       const notificationEmail = process.env.PRAXORA_NOTIFICATION_EMAIL;
       if (!notificationEmail) throw new Error('Notification email is missing.');
-      await sendEmail({ to: notificationEmail, subject: 'New Praxora Follow-Up Leak Review Request', text: founderNotification(review) });
-      await sendEmail({ to: email, subject: 'Your Praxora follow-up leak review request', text: requesterConfirmation(review) });
-      emailSent = true;
-    } catch (emailError) {
-      console.error('Leak review email failed', emailError);
+      await sendEmail({
+        to: notificationEmail,
+        subject: 'New Praxora Follow-Up Leak Review Request',
+        text: founderNotification(review)
+      });
+      founderEmailSent = true;
+      await updateSupabase('leak_reviews', stored && stored.id, { founder_email_status: 'sent' });
+    } catch (error) {
+      console.error('Founder notification failed', error);
+      await updateSupabase('leak_reviews', stored && stored.id, { founder_email_status: 'failed' });
     }
-    return sendJson(res, 200, { success: true, email_sent: emailSent });
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Your Praxora follow-up leak review request',
+        text: requesterConfirmation(review)
+      });
+      requesterEmailSent = true;
+      await updateSupabase('leak_reviews', stored && stored.id, { requester_email_status: 'sent' });
+    } catch (error) {
+      console.error('Requester confirmation failed', error);
+      await updateSupabase('leak_reviews', stored && stored.id, { requester_email_status: 'failed' });
+    }
+
+    return sendJson(res, 200, {
+      success: true,
+      founder_email_sent: founderEmailSent,
+      requester_email_sent: requesterEmailSent
+    });
   } catch (error) {
     console.error('Leak review failed', error);
     return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
   }
 };
-

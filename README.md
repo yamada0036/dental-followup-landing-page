@@ -42,13 +42,14 @@ PRAXORA_FROM_EMAIL
 PRAXORA_NOTIFICATION_EMAIL
 
 PRAXORA_GA_MEASUREMENT_ID
+RATE_LIMIT_SALT
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` must only be configured in Vercel environment variables. Do not expose them in frontend JavaScript.
 
 ## Database Setup
 
-Run `docs/supabase-schema.sql` in Supabase before routing production traffic to the funnel.
+Run `docs/supabase-schema.sql` for a fresh setup, or `docs/p0-p1-migration.sql` to update an existing Supabase project, before routing production traffic.
 
 Tables:
 
@@ -67,11 +68,11 @@ Resend must be configured with:
 
 Verify the sender domain in Resend before claiming production email delivery is live.
 
-Email 1 is implemented immediately after Calculator submission. Emails 2-5 are documented in `docs/email-sequence.md` and should be configured in a real email automation provider before being described as live.
+Email 1 is implemented immediately after Calculator submission. Emails 2-5 are NOT LIVE, documented in `docs/email-sequence.md`, and should be configured in a real email automation provider before being described as live. A real unsubscribe mechanism is required before activating marketing automation.
 
 ## Analytics Setup
 
-Set `PRAXORA_GA_MEASUREMENT_ID` to a GA4 measurement ID such as `G-XXXXXXXXXX`.
+Set `PRAXORA_GA_MEASUREMENT_ID` to a GA4 measurement ID such as `G-XXXXXXXXXX`. Set `RATE_LIMIT_SALT` to a long random string for hashed rate limiting.
 
 Frontend events are sent through `trackEvent()` after `gtag.js` is loaded from `/api/config`. Do not send names, emails, practice names, or raw form text to Google Analytics.
 
@@ -87,3 +88,5 @@ Frontend events are sent through `trackEvent()` after `gtag.js` is loaded from `
 - `docs/email-sequence.md` - education sequence plan
 
 Do not delete `.nojekyll`, `googlea050d084b5f189f3.html`, `robots.txt`, `sitemap.xml`, or `assets/`.
+
+
