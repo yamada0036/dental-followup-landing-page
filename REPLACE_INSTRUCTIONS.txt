@@ -1,32 +1,13 @@
-Replace / add these files in the GitHub repo root:
+﻿# Praxora P0 Funnel Configuration Notes
 
-1. Replace:
-   - index.html
-   - styles.css
-   - script.js
-   - sitemap.xml
-   - README.md
+The site no longer uses a Tally placeholder form.
 
-2. Add:
-   - free-missed-revenue-audit.html
-   - workflow-missed-implant-consult.html
-   - workflow-recall-leakage.html
-   - workflow-unscheduled-treatment.html
+Before sending real traffic, configure the Vercel environment variables listed in `.env.example`, run `docs/supabase-schema.sql` in Supabase, and verify the Resend sending domain.
 
-3. Keep existing files/folders:
-   - assets/
-   - missed-calls.html
-   - og-image.png
-   - robots.txt
-   - .nojekyll
-   - googlea050d084b5f189f3.html or any Google verification file
+Required production checks:
 
-4. After upload, replace all:
-   https://tally.so/r/YOUR_FORM_ID
-   with your real Tally or Calendly link.
-
-
-Vercel domain configured in this package:
-https://dental-followup-landing-page.vercel.app
-
-This package updates canonical URLs, Open Graph URLs, sitemap.xml, and robots.txt for the Vercel domain.
+1. Supabase tables `leads` and `leak_reviews` exist.
+2. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are configured server-side in Vercel.
+3. `RESEND_API_KEY`, `PRAXORA_FROM_EMAIL`, and `PRAXORA_NOTIFICATION_EMAIL` are configured server-side in Vercel.
+4. `PRAXORA_GA_MEASUREMENT_ID` is configured if GA4 tracking should collect real events.
+5. Vercel Production is redeployed from the intended main branch commit.

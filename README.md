@@ -1,52 +1,89 @@
-# Dental Follow-Up Recovery Landing Page
+﻿# Praxora
 
-Static GitHub Pages site for Praxora.ai, an AI revenue recovery landing page for dental practices.
+Praxora is positioned as **AI Follow-Up Recovery for Dental Practices**.
 
-## Files
+The core problem is **Follow-Up Leakage**: patient opportunities falling out of the normal follow-up process without a clear next action, owner, or tracked outcome.
 
-- `index.html` — main Praxora landing page with SEO metadata and LinkedIn preview tags
-- `free-missed-revenue-audit.html` — free missed revenue audit conversion page
-- `workflow-missed-implant-consult.html` — example workflow teardown page for missed implant consults
-- `workflow-recall-leakage.html` — example workflow teardown page for recall leakage
-- `workflow-unscheduled-treatment.html` — example workflow teardown page for unscheduled treatment follow-up
-- `missed-calls.html` — existing SEO article page
-- `og-image.png` — LinkedIn/Twitter preview image
-- `assets/` — logo and visual assets
-- `styles.css` — shared site styles
-- `script.js` — header scroll and reveal animations
-- `robots.txt` — crawler instructions
-- `sitemap.xml` — sitemap for Google Search Console
+Core workflows:
 
-## Deployment
+- Missed Calls
+- Unscheduled Treatment
+- Overdue Recall
 
-Upload all files to the root of the existing GitHub repository:
+Primary funnel:
 
-`yamada0036/dental-followup-landing-page`
+```text
+Revenue Leak Calculator
+-> Recovery Breakdown
+-> Recovery Kit
+-> Free Follow-Up Leak Review
+```
 
-GitHub Pages should remain configured as:
+## Architecture
 
-- Source: Deploy from a branch
-- Branch: main
-- Folder: / root
+The site remains a static HTML/CSS/vanilla JavaScript website deployed on Vercel.
 
-After committing the updated files, GitHub Pages will redeploy automatically.
+P0 conversion endpoints live in `api/` as Vercel Serverless Functions:
 
-Live URL:
+- `POST /api/lead` stores Calculator leads and sends Email 1.
+- `POST /api/leak-review` stores Free Follow-Up Leak Review requests and sends notification/confirmation emails.
+- `GET /api/config` exposes non-secret frontend config such as the GA measurement ID.
 
-https://dental-followup-landing-page.vercel.app/
+Lead storage uses Supabase through server-side environment variables. Email delivery uses Resend through server-side environment variables.
 
-## Important edits before publishing seriously
+## Required Environment Variables
 
-Replace every Tally placeholder link:
+```text
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
 
-`https://tally.so/r/YOUR_FORM_ID`
+RESEND_API_KEY
+PRAXORA_FROM_EMAIL
+PRAXORA_NOTIFICATION_EMAIL
 
-with your real Tally, Calendly, Formspree, or contact form link.
+PRAXORA_GA_MEASUREMENT_ID
+```
 
-Do not delete:
+`SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` must only be configured in Vercel environment variables. Do not expose them in frontend JavaScript.
 
-- `.nojekyll`
-- Google Search Console verification file
-- `robots.txt`
-- existing `assets/` folder
-- existing `og-image.png`
+## Database Setup
+
+Run `docs/supabase-schema.sql` in Supabase before routing production traffic to the funnel.
+
+Tables:
+
+- `leads` for Revenue Leak Calculator submissions
+- `leak_reviews` for Free Follow-Up Leak Review requests
+
+No patient-level data should be collected.
+
+## Email Setup
+
+Resend must be configured with:
+
+- `RESEND_API_KEY`
+- `PRAXORA_FROM_EMAIL`
+- `PRAXORA_NOTIFICATION_EMAIL`
+
+Verify the sender domain in Resend before claiming production email delivery is live.
+
+Email 1 is implemented immediately after Calculator submission. Emails 2-5 are documented in `docs/email-sequence.md` and should be configured in a real email automation provider before being described as live.
+
+## Analytics Setup
+
+Set `PRAXORA_GA_MEASUREMENT_ID` to a GA4 measurement ID such as `G-XXXXXXXXXX`.
+
+Frontend events are sent through `trackEvent()` after `gtag.js` is loaded from `/api/config`. Do not send names, emails, practice names, or raw form text to Google Analytics.
+
+## Important Files
+
+- `index.html` - homepage
+- `dental-revenue-leak-calculator/` - Revenue Leak Calculator
+- `follow-up-recovery-kit/` - web-based Recovery Kit
+- `free-missed-revenue-audit.html` - Free Follow-Up Leak Review form
+- `resources/follow-up-leakage-dental-practice/` - pillar page
+- `api/` - Vercel Serverless Functions
+- `docs/supabase-schema.sql` - database schema
+- `docs/email-sequence.md` - education sequence plan
+
+Do not delete `.nojekyll`, `googlea050d084b5f189f3.html`, `robots.txt`, `sitemap.xml`, or `assets/`.

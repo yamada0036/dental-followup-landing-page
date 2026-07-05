@@ -672,3 +672,32 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .form-actions .button { width: 100%; }
   .content-nav { display: grid; }
 }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+  transform: none;
+}
+.success-panel {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid rgba(40, 211, 155, .26);
+  border-radius: 8px;
+  background: rgba(40, 211, 155, .08);
+}
+.success-panel[hidden] { display: none; }
+.success-panel h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 0; }
+.success-panel p { color: var(--muted); margin: 0; }
+.checklist { list-style: none; padding-left: 0 !important; }
+.checklist li { font-weight: 800; }

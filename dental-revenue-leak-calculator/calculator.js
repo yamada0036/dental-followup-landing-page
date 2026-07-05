@@ -47,6 +47,7 @@ function setError(key, message = '') { const node = document.querySelector(`[dat
 function clearErrors() { document.querySelectorAll('.error-message').forEach((node) => { node.textContent = ''; }); }
 function validNumber(id, message) { const input = document.getElementById(id); const value = numberValue(id); if (!input || !Number.isFinite(value) || value < Number(input.min || 0) || value > Number(input.max || Number.MAX_SAFE_INTEGER)) { setError(id, message); return false; } return true; }
 function requireOption(name, message) { if (!selected(name)) { setError(name, message); return false; } return true; }
+function safeTrack(eventName, parameters = {}) { if (typeof window.trackEvent === 'function') window.trackEvent(eventName, parameters); else console.info('[analytics]', eventName, parameters); }
 
 function renderOptions() {
   Object.entries(optionSets).forEach(([group, options]) => {
@@ -57,13 +58,8 @@ function renderOptions() {
 }
 
 function captureUTMParameters() {
-  const params = new URLSearchParams(window.location.search);
-  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach((key) => { calculatorState.utm[key] = params.get(key) || sessionStorage.getItem(`praxora_${key}`) || ''; if (calculatorState.utm[key]) sessionStorage.setItem(`praxora_${key}`, calculatorState.utm[key]); });
-}
-
-function trackEvent(eventName, parameters = {}) {
-  if (typeof window.gtag === 'function') { window.gtag('event', eventName, parameters); return; }
-  console.info('[analytics]', eventName, parameters);
+  if (window.PraxoraUtm) window.PraxoraUtm.persist();
+  calculatorState.utm = window.PraxoraUtm ? window.PraxoraUtm.get() : {};
 }
 
 function syncTreatmentFields() {
@@ -133,22 +129,8 @@ function calculateRecallOpportunity() { return calculatorState.overdueRecallCoun
 function calculateMissedCallScore() { return Math.min(100, missedRateScores[calculatorState.missedCallRateKey] + missedFollowupGapScores[calculatorState.missedCallFollowupKey]); }
 function calculateUnscheduledTreatmentScore() { const base = treatmentScores[calculatorState.unscheduledFollowupProcess]; const value = baseUnscheduledValue(); const modifier = value > 500000 ? 15 : value >= 150000 ? 10 : value >= 50000 ? 5 : 0; return Math.min(100, base + modifier); }
 function calculateRecallScore() { const base = recallScores[calculatorState.recallWorkflowStatus]; const count = calculatorState.overdueRecallCount; const modifier = count > 1000 ? 15 : count >= 300 ? 10 : count >= 100 ? 5 : 0; return Math.min(100, base + modifier); }
-function determineLargestLeak() {
-  const scores = calculatorState.results;
-  const max = Math.max(scores.unscheduledTreatmentScore, scores.missedCallScore, scores.recallScore);
-  if (scores.unscheduledTreatmentScore === max) return 'unscheduled_treatment';
-  if (scores.missedCallScore === max) return 'missed_calls';
-  return 'overdue_recall';
-}
-function calculateResults() {
-  calculatorState.results.missedCallOpportunity = calculateMissedCallOpportunity();
-  calculatorState.results.unscheduledTreatmentOpportunity = calculateUnscheduledTreatmentOpportunity();
-  calculatorState.results.recallOpportunity = calculateRecallOpportunity();
-  calculatorState.results.missedCallScore = calculateMissedCallScore();
-  calculatorState.results.unscheduledTreatmentScore = calculateUnscheduledTreatmentScore();
-  calculatorState.results.recallScore = calculateRecallScore();
-  calculatorState.results.largestLeak = determineLargestLeak();
-}
+function determineLargestLeak() { const scores = calculatorState.results; const max = Math.max(scores.unscheduledTreatmentScore, scores.missedCallScore, scores.recallScore); if (scores.unscheduledTreatmentScore === max) return 'unscheduled_treatment'; if (scores.missedCallScore === max) return 'missed_calls'; return 'overdue_recall'; }
+function calculateResults() { calculatorState.results.missedCallOpportunity = calculateMissedCallOpportunity(); calculatorState.results.unscheduledTreatmentOpportunity = calculateUnscheduledTreatmentOpportunity(); calculatorState.results.recallOpportunity = calculateRecallOpportunity(); calculatorState.results.missedCallScore = calculateMissedCallScore(); calculatorState.results.unscheduledTreatmentScore = calculateUnscheduledTreatmentScore(); calculatorState.results.recallScore = calculateRecallScore(); calculatorState.results.largestLeak = determineLargestLeak(); }
 
 const resultCopy = {
   missed_calls: { title: 'Missed Calls', diagnosis: 'Your practice may not have a reliable process for moving missed calls back into the patient access workflow.\n\nThe missed call itself is only the first event.\n\nThe larger gap appears when the call is not identified, prioritized, owned, and followed through to an outcome.', workflow: ['Find missed calls', 'Classify call context', 'Prioritize likely patient opportunities', 'Assign or review follow-up', 'Track reply and booking outcome'] },
@@ -160,66 +142,64 @@ function renderResults() {
   const data = calculatorState.results;
   const copy = resultCopy[data.largestLeak];
   document.getElementById('largestLeakTitle').textContent = copy.title;
-  document.getElementById('resultGrid').innerHTML = `
-    <div class="result-metric"><span>Missed Calls</span><strong>${money(data.missedCallOpportunity)}</strong><p>Estimated monthly opportunity at risk</p></div>
-    <div class="result-metric"><span>Unscheduled Treatment</span><strong>${money(data.unscheduledTreatmentOpportunity)}</strong><p>Estimated treatment opportunity exposed to follow-up gaps</p></div>
-    <div class="result-metric"><span>Overdue Recall</span><strong>${money(data.recallOpportunity)}</strong><p>Estimated recall opportunity exposed to follow-up gaps</p></div>`;
+  document.getElementById('resultGrid').innerHTML = `<div class="result-metric"><span>Missed Calls</span><strong>${money(data.missedCallOpportunity)}</strong><p>Estimated monthly opportunity at risk</p></div><div class="result-metric"><span>Unscheduled Treatment</span><strong>${money(data.unscheduledTreatmentOpportunity)}</strong><p>Estimated treatment opportunity exposed to follow-up gaps</p></div><div class="result-metric"><span>Overdue Recall</span><strong>${money(data.recallOpportunity)}</strong><p>Estimated recall opportunity exposed to follow-up gaps</p></div>`;
   document.getElementById('diagnosisTitle').textContent = copy.title;
   document.getElementById('diagnosisCopy').innerHTML = copy.diagnosis.split('\n\n').map((text) => `<span>${text}</span>`).join('<br><br>');
   document.getElementById('workflowLine').innerHTML = copy.workflow.map((item) => `<li>${item}</li>`).join('');
 }
 
 async function submitLead(payload) {
-  const endpoint = window.PRAXORA_LEAD_ENDPOINT;
-  if (!endpoint) { console.info('Lead payload:', payload); throw new Error('Lead endpoint is not configured.'); }
-  const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  if (!response.ok) throw new Error('Lead submission failed.');
-  return response.json().catch(() => ({}));
+  const response = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.success) throw new Error('Lead submission failed.');
+  return result;
 }
 
 function leadPayload(form) {
   const formData = new FormData(form);
   return {
-    first_name: formData.get('first_name') || '', email: formData.get('email') || '', practice_name: formData.get('practice_name') || '', source: 'revenue_leak_calculator', largest_leak: calculatorState.results.largestLeak,
+    first_name: formData.get('first_name') || '', email: formData.get('email') || '', practice_name: formData.get('practice_name') || '', company_website: formData.get('company_website') || '', source: 'revenue_leak_calculator', largest_leak: calculatorState.results.largestLeak,
     missed_call_score: calculatorState.results.missedCallScore, unscheduled_treatment_score: calculatorState.results.unscheduledTreatmentScore, recall_score: calculatorState.results.recallScore,
     missed_call_opportunity: Math.round(calculatorState.results.missedCallOpportunity), unscheduled_treatment_opportunity: Math.round(calculatorState.results.unscheduledTreatmentOpportunity), recall_opportunity: Math.round(calculatorState.results.recallOpportunity),
     daily_calls: calculatorState.dailyCalls, missed_call_rate: calculatorState.missedCallRateKey, missed_call_followup_rate: calculatorState.missedCallFollowupKey, unscheduled_followup_process: calculatorState.unscheduledFollowupProcess, recall_workflow_status: calculatorState.recallWorkflowStatus,
-    utm_source: calculatorState.utm.utm_source || '', utm_medium: calculatorState.utm.utm_medium || '', utm_campaign: calculatorState.utm.utm_campaign || '', utm_content: calculatorState.utm.utm_content || '', created_at: new Date().toISOString()
+    utm_source: calculatorState.utm.utm_source || '', utm_medium: calculatorState.utm.utm_medium || '', utm_campaign: calculatorState.utm.utm_campaign || '', utm_content: calculatorState.utm.utm_content || ''
   };
 }
 
-function showStep(step) {
-  document.querySelectorAll('.calc-step').forEach((node) => node.classList.toggle('active', node.dataset.step === String(step)));
-  document.querySelectorAll('[data-progress]').forEach((node) => node.classList.toggle('active', Number(node.dataset.progress) <= step));
-}
+function showStep(step) { document.querySelectorAll('.calc-step').forEach((node) => node.classList.toggle('active', node.dataset.step === String(step))); document.querySelectorAll('[data-progress]').forEach((node) => node.classList.toggle('active', Number(node.dataset.progress) <= step)); }
+
+function largestLeakEventName() { if (calculatorState.results.largestLeak === 'missed_calls') return 'calculator_largest_leak_missed_call'; if (calculatorState.results.largestLeak === 'unscheduled_treatment') return 'calculator_largest_leak_unscheduled_treatment'; return 'calculator_largest_leak_recall'; }
 
 function initCalculator() {
-  renderOptions(); captureUTMParameters(); trackEvent('calculator_view');
-  document.getElementById('startCalculator')?.addEventListener('click', () => { document.getElementById('calculatorApp').scrollIntoView({ behavior: 'smooth' }); trackEvent('calculator_start'); });
+  renderOptions(); captureUTMParameters(); safeTrack('calculator_view', calculatorState.utm);
+  document.getElementById('startCalculator')?.addEventListener('click', () => { document.getElementById('calculatorApp').scrollIntoView({ behavior: 'smooth' }); safeTrack('calculator_start', calculatorState.utm); });
   document.querySelector('[data-group="knows_unscheduled_value"]').addEventListener('change', syncTreatmentFields);
-  document.querySelectorAll('[data-next]').forEach((button) => button.addEventListener('click', () => {
-    const step = Number(button.closest('.calc-step').dataset.step);
-    if (step === 1 && validateStepOne()) { trackEvent('calculator_step_1_complete'); showStep(2); }
-    if (step === 2 && validateStepTwo()) { trackEvent('calculator_step_2_complete'); showStep(3); }
-  }));
+  document.querySelectorAll('[data-next]').forEach((button) => button.addEventListener('click', () => { const step = Number(button.closest('.calc-step').dataset.step); if (step === 1 && validateStepOne()) { safeTrack('calculator_step_1_complete', calculatorState.utm); showStep(2); } if (step === 2 && validateStepTwo()) { safeTrack('calculator_step_2_complete', calculatorState.utm); showStep(3); } }));
   document.querySelectorAll('[data-back]').forEach((button) => button.addEventListener('click', () => showStep(Number(button.closest('.calc-step').dataset.step) - 1)));
-  document.querySelector('[data-results]').addEventListener('click', () => {
-    if (!validateStepThree()) return;
-    trackEvent('calculator_step_3_complete'); calculateResults(); renderResults();
-    document.getElementById('calculatorForm').hidden = true; document.getElementById('resultView').hidden = false;
-    trackEvent('calculator_result_view', calculatorState.results); trackEvent(`calculator_largest_leak_${calculatorState.results.largestLeak === 'missed_calls' ? 'missed_call' : calculatorState.results.largestLeak}`);
-  });
+  document.querySelector('[data-results]').addEventListener('click', () => { if (!validateStepThree()) return; safeTrack('calculator_step_3_complete', calculatorState.utm); calculateResults(); renderResults(); document.getElementById('calculatorForm').hidden = true; document.getElementById('resultView').hidden = false; safeTrack('calculator_result_view', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm }); safeTrack(largestLeakEventName(), { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm }); });
   document.getElementById('calculatorLeadForm').addEventListener('submit', async (event) => {
     event.preventDefault(); clearErrors();
-    const form = event.currentTarget; const status = form.querySelector('[data-form-status]');
+    const form = event.currentTarget; const status = form.querySelector('[data-form-status]'); const button = form.querySelector('button[type="submit"]');
     let valid = true;
     if (!form.first_name.value.trim()) { setError('first_name', 'Please enter your first name.'); valid = false; }
     if (!form.email.value.trim() || !form.email.validity.valid) { setError('email', 'Please enter a valid work email.'); valid = false; }
     if (!valid) return;
-    try { status.textContent = 'Submitting...'; status.classList.remove('error'); trackEvent('calculator_email_submit'); await submitLead(leadPayload(form)); status.textContent = 'Request received.'; trackEvent('calculator_email_submit_success'); }
-    catch (error) { status.textContent = 'Email delivery is not configured yet.'; status.classList.add('error'); trackEvent('calculator_email_submit_error', { message: error.message }); }
+    button.disabled = true; button.textContent = 'Sending Your Breakdown...'; status.textContent = 'Sending your breakdown...'; status.classList.remove('error');
+    try {
+      safeTrack('calculator_email_submit', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
+      const result = await submitLead(leadPayload(form));
+      if (result.email_sent) {
+        form.innerHTML = '<div class="success-panel"><h2>Your Recovery Breakdown Is on the Way</h2><p>We have sent your follow-up leakage breakdown and recovery resources to your email.</p><div class="form-actions"><a class="button primary" href="/follow-up-recovery-kit/">View the Recovery Kit</a><a class="button ghost" href="/free-missed-revenue-audit.html">Get a Free Follow-Up Leak Review</a></div></div>';
+      } else {
+        form.innerHTML = '<div class="success-panel"><h2>Your results were saved, but we could not send the email right now.</h2><p>You can still view the Recovery Kit and request a free workflow review.</p><div class="form-actions"><a class="button primary" href="/follow-up-recovery-kit/">View the Recovery Kit</a><a class="button ghost" href="/free-missed-revenue-audit.html">Get a Free Follow-Up Leak Review</a></div></div>';
+      }
+      safeTrack('calculator_email_submit_success', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
+    } catch (error) {
+      status.innerHTML = '<strong>We could not send your recovery breakdown right now.</strong><br>Your calculator results are still available on this page. Please try submitting your email again.';
+      status.classList.add('error'); button.disabled = false; button.textContent = 'Try Again';
+      safeTrack('calculator_email_submit_error', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
+    }
   });
 }
 
 initCalculator();
-
