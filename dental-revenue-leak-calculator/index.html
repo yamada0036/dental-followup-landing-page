@@ -1,0 +1,96 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dental Revenue Leak Calculator | Praxora</title>
+  <meta name="description" content="Estimate where follow-up opportunities may be slipping through missed calls, unscheduled treatment, and overdue recall workflows." />
+  <link rel="canonical" href="https://dental-followup-landing-page.vercel.app/dental-revenue-leak-calculator/" />
+  <meta property="og:title" content="Dental Revenue Leak Calculator | Praxora" />
+  <meta property="og:description" content="Estimate where follow-up opportunities may be slipping through missed calls, unscheduled treatment, and overdue recall workflows." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://dental-followup-landing-page.vercel.app/dental-revenue-leak-calculator/" />
+  <meta property="og:image" content="https://dental-followup-landing-page.vercel.app/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;760;850;900;950&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="calculator.css" />
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="/index.html" aria-label="Praxora home"><img src="/assets/praxora-logo.png" alt="Praxora logo" /><span>Praxora <span>.ai</span></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">Menu</button>
+    <nav class="nav-links" id="mainNav" aria-label="Main navigation"><a href="/index.html#recovery-framework">How It Works</a><a href="/dental-revenue-leak-calculator/">Calculator</a><a href="/index.html#resources">Resources</a><a href="/free-missed-revenue-audit.html">Free Leak Review</a><a href="mailto:zqx0310liubo@gmail.com?subject=Praxora%20demo%20request">Book a Demo</a></nav>
+    <a class="nav-cta" href="/free-missed-revenue-audit.html">Free Leak Review</a>
+  </header>
+
+  <main>
+    <section class="calculator-hero">
+      <div class="page-hero-bg" aria-hidden="true"></div><div class="page-noise" aria-hidden="true"></div>
+      <div class="calculator-shell reveal">
+        <div class="eyebrow"><span></span>Revenue Leak Calculator</div>
+        <h1>How Much Opportunity Could Be Slipping Through Your Follow-Up Process?</h1>
+        <p class="page-copy">Missed calls, unscheduled treatment, and overdue recalls can quietly fall out of the normal follow-up process.</p>
+        <p class="page-copy">Answer a few questions to estimate where your largest follow-up gap may be.</p>
+        <p class="microcopy">Takes about 2 minutes. No patient data required.</p>
+        <button class="button primary" type="button" id="startCalculator">Calculate My Follow-Up Leak</button>
+      </div>
+    </section>
+
+    <section class="calculator-section" id="calculatorApp" aria-live="polite">
+      <div class="calculator-card">
+        <div class="progress-ui" aria-label="Calculator progress"><span class="active" data-progress="1">1 Missed Calls</span><span data-progress="2">2 Treatment</span><span data-progress="3">3 Recall</span></div>
+        <form id="calculatorForm" novalidate>
+          <fieldset class="calc-step active" data-step="1">
+            <p class="step-count">Step 1 of 3</p><h2>Missed Calls</h2><p>A missed call does not always become a lost patient. The bigger question is what happens after the call is missed.</p>
+            <div class="form-field"><label for="daily_calls">About how many patient calls does your practice receive on a typical business day?</label><input id="daily_calls" name="daily_calls" type="number" min="1" max="1000" placeholder="e.g. 40" required /><p class="error-message" data-error-for="daily_calls"></p></div>
+            <div class="option-group"><p class="radio-label">What percentage of those calls do you estimate are missed?</p><div class="option-grid" data-group="missed_call_rate"></div><p class="error-message" data-error-for="missed_call_rate"></p></div>
+            <div class="option-group"><p class="radio-label">How consistently are missed calls followed up?</p><div class="option-grid" data-group="missed_call_followup_rate"></div><p class="error-message" data-error-for="missed_call_followup_rate"></p></div>
+            <div class="form-field"><label for="average_new_patient_value">What is the approximate value of a new patient to your practice?</label><input id="average_new_patient_value" name="average_new_patient_value" type="number" min="1" max="100000" placeholder="e.g. 500" required /><p class="form-help">Use your approximate average if you're not sure.</p><p class="error-message" data-error-for="average_new_patient_value"></p></div>
+            <div class="form-actions"><button class="button primary" type="button" data-next>Continue to Treatment Follow-Up</button></div>
+          </fieldset>
+
+          <fieldset class="calc-step" data-step="2">
+            <p class="step-count">Step 2 of 3</p><h2>Unscheduled Treatment</h2><p>Patients may already have a diagnosis and treatment recommendation but still leave without scheduling.</p>
+            <div class="option-group"><p class="radio-label">Do you know the approximate value of unscheduled treatment currently in your system?</p><div class="option-grid" data-group="knows_unscheduled_value"></div><p class="error-message" data-error-for="knows_unscheduled_value"></p></div>
+            <div id="knownTreatmentFields" hidden><div class="form-field"><label for="unscheduled_treatment_value">Approximate total value of unscheduled treatment</label><input id="unscheduled_treatment_value" name="unscheduled_treatment_value" type="number" min="1" max="10000000" placeholder="e.g. 250000" /><p class="error-message" data-error-for="unscheduled_treatment_value"></p></div></div>
+            <div id="estimatedTreatmentFields" hidden><div class="form-field"><label for="unscheduled_patient_count">Approximately how many patients currently have unscheduled treatment?</label><input id="unscheduled_patient_count" name="unscheduled_patient_count" type="number" min="1" max="100000" placeholder="e.g. 120" /><p class="error-message" data-error-for="unscheduled_patient_count"></p></div><div class="form-field"><label for="average_treatment_value">What is the approximate average value of a treatment plan?</label><input id="average_treatment_value" name="average_treatment_value" type="number" min="1" max="1000000" placeholder="e.g. 3000" /><p class="error-message" data-error-for="average_treatment_value"></p></div></div>
+            <div class="option-group"><p class="radio-label">How consistently are these patients followed up?</p><div class="option-grid" data-group="unscheduled_followup_process"></div><p class="error-message" data-error-for="unscheduled_followup_process"></p></div>
+            <div class="form-actions"><button class="button ghost" type="button" data-back>Back</button><button class="button primary" type="button" data-next>Continue to Recall</button></div>
+          </fieldset>
+
+          <fieldset class="calc-step" data-step="3">
+            <p class="step-count">Step 3 of 3</p><h2>Overdue Recall</h2><p>A recall list shows who is overdue. It does not tell you whether the patient is moving through a reliable recovery workflow.</p>
+            <div class="form-field"><label for="overdue_recall_count">Approximately how many patients are currently overdue for recall?</label><input id="overdue_recall_count" name="overdue_recall_count" type="number" min="1" max="100000" placeholder="e.g. 300" required /><p class="error-message" data-error-for="overdue_recall_count"></p></div>
+            <div class="form-field"><label for="average_recall_value">What is the approximate average value of a recall or hygiene visit?</label><input id="average_recall_value" name="average_recall_value" type="number" min="1" max="10000" placeholder="e.g. 180" required /><p class="error-message" data-error-for="average_recall_value"></p></div>
+            <div class="option-group"><p class="radio-label">Do you have a consistent process for reactivating overdue recall patients?</p><div class="option-grid" data-group="recall_workflow_status"></div><p class="error-message" data-error-for="recall_workflow_status"></p></div>
+            <div class="form-actions"><button class="button ghost" type="button" data-back>Back</button><button class="button primary" type="button" data-results>See My Follow-Up Leakage Estimate</button></div>
+          </fieldset>
+        </form>
+
+        <section class="result-view" id="resultView" hidden>
+          <span class="section-kicker">YOUR FOLLOW-UP LEAKAGE ESTIMATE</span>
+          <h2>Your largest follow-up gap appears to be:</h2>
+          <h3 id="largestLeakTitle"></h3>
+          <p>Based on your answers, this workflow appears to have the highest level of follow-up exposure.</p><p>This does not mean every patient opportunity can or should be recovered.</p><p>It means this may be the first workflow worth reviewing.</p>
+          <div class="result-grid" id="resultGrid"></div>
+          <div class="content-block compact"><h3 id="diagnosisTitle"></h3><p id="diagnosisCopy"></p><ul class="workflow-line" id="workflowLine"></ul></div>
+          <p class="disclaimer-inline">This is a directional estimate based on the information provided and general workflow assumptions. It does not represent guaranteed revenue or recovery outcomes.</p>
+          <form class="lead-capture" id="calculatorLeadForm" novalidate>
+            <h2>Want the Full Recovery Breakdown?</h2><p>We'll send you a practical breakdown of your largest follow-up gap, plus three recovery workflows covering missed calls, unscheduled treatment, and overdue recall.</p>
+            <div class="form-field"><label for="first_name">First Name</label><input id="first_name" name="first_name" required /><p class="error-message" data-error-for="first_name"></p></div>
+            <div class="form-field"><label for="email">Work Email</label><input id="email" name="email" type="email" required /><p class="error-message" data-error-for="email"></p></div>
+            <div class="form-field"><label for="practice_name">Practice Name</label><input id="practice_name" name="practice_name" /></div>
+            <button class="button primary" type="submit">Email Me My Recovery Breakdown</button>
+            <p class="form-help">No patient data required. No spam. Unsubscribe anytime.</p><p class="status-message" data-form-status></p>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><a class="brand small" href="/index.html"><img src="/assets/praxora-logo.png" alt="Praxora logo" /><span>Praxora <span>.ai</span></span></a><div class="footer-links"><a href="/resources/follow-up-leakage-dental-practice/">Follow-Up Leakage</a><a href="/free-missed-revenue-audit.html">Free Leak Review</a><a href="/follow-up-recovery-kit/">Recovery Kit</a></div><p>AI follow-up recovery for dental practices.</p></footer>
+  <script src="/script.js"></script><script src="calculator.js"></script>
+</body>
+</html>
