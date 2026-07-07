@@ -65,8 +65,11 @@ img { max-width: 100%; }
   white-space: nowrap;
 }
 .brand img {
+  display: block;
   width: 46px;
   height: 46px;
+  flex: 0 0 46px;
+  object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 18px 40px rgba(47, 125, 246, .28);
 }
@@ -518,6 +521,21 @@ h4 {
 .delay-3 { transition-delay: .24s; }
 .delay-4 { transition-delay: .32s; }
 
+
+/* Medium desktop header: preserve the full-size desktop typography.
+   Only tighten spacing before the existing <=1040px Menu breakpoint. */
+@media (min-width: 1041px) and (max-width: 1320px) {
+  .site-header {
+    gap: 18px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+}
+
 @media (max-width: 1040px) {
   .nav-links { display: none; }
   .recover-grid, .teardown-grid, .review-grid, .faq-grid { grid-template-columns: repeat(2, 1fr); }
@@ -951,38 +969,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 
-
-/* Medium desktop header: keep the full navigation visible.
-   The Menu control remains reserved for the existing <=1040px breakpoint. */
-@media (min-width: 1041px) and (max-width: 1320px) {
-  .site-header {
-    gap: 16px;
-    padding-left: 28px;
-    padding-right: 28px;
-  }
-
-  .brand {
-    gap: 10px;
-    font-size: 26px;
-  }
-
-  .brand img {
-    width: 42px;
-    height: 42px;
-  }
-
-  .nav-links {
-    gap: 16px;
-    font-size: 14px;
-  }
-
-  .nav-cta {
-    min-height: 44px;
-    padding: 0 18px;
-    font-size: 14px;
-  }
-}
-
 @media (max-width: 720px) {
   .article-page .page-hero {
     padding: 104px 18px 46px;
@@ -1035,3 +1021,4 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     gap: 9px;
   }
 }
+

@@ -1,41 +1,27 @@
-# Validation Report
+# Final Validation
 
-## Automated checks
+- HTML files checked: 12
+- PASS — All brand image slots use praxora-icon.png
+- PASS — No Free Leak Review duplicate inside nav
+- PASS — Standalone Free Leak Review CTA retained
+- PASS — One H1 per page
+- PASS — Original <=1040 Menu breakpoint retained
+- PASS — No early <=1280 Menu breakpoint
+- PASS — Medium desktop block only tightens spacing
+- PASS — CSS brace balance
+- PASS — Recovery Kit absent from sitemap
 
-- HTML pages in patch: **12**
-- SEO article pages with one H1: **12/12**
-- Article pages using `article-page`: **12/12**
-- Article bodies still using `reveal`: **0**
-- Pages with `On this page` navigation: **11**
-- Pages with comparison snapshot: **7**
-- CSS brace balance: **0**
-- Sitemap URL count: **17**
-- `/resources/` present in sitemap: **YES**
-- Recovery Kit present in sitemap: **NO**
-- SEO page links from resource hub: **11**
-- Unresolved local links in patch validation: **0**
+## Per-page header audit
 
-## Page checks
-
-| Page | H1 | article-page | article reveal | TOC | snapshot | robots |
-|---|---:|---|---|---|---|---|
-| `missed-calls.html` | 1 | yes | no | yes | no | `index, follow` |
-| `resources/ai-dental-receptionist-vs-follow-up-recovery/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/dental-intelligence-vs-follow-up-recovery/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/dental-recall-software-vs-recovery/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/follow-up-leakage-dental-practice/index.html` | 1 | yes | no | yes | no | `index, follow` |
-| `resources/index.html` | 1 | yes | no | no | no | `index, follow` |
-| `resources/maxassist-alternatives-dental-follow-up/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/missed-call-text-back-vs-recovery/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/recallmax-alternatives-dental-follow-up/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `resources/weave-vs-follow-up-recovery/index.html` | 1 | yes | no | yes | yes | `index, follow` |
-| `workflow-recall-leakage.html` | 1 | yes | no | yes | no | `index, follow` |
-| `workflow-unscheduled-treatment.html` | 1 | yes | no | yes | no | `index, follow` |
-
-## Scope checks
-
-- `index.html` is not included.
-- `script.js` is not included.
-- `api/` is not included.
-- Calculator code is not included.
-- Supabase / Resend / GA / UTM logic is not included.
+- `missed-calls.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/ai-dental-receptionist-vs-follow-up-recovery/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/dental-intelligence-vs-follow-up-recovery/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/dental-recall-software-vs-recovery/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/follow-up-leakage-dental-practice/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/maxassist-alternatives-dental-follow-up/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/missed-call-text-back-vs-recovery/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/recallmax-alternatives-dental-follow-up/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `resources/weave-vs-follow-up-recovery/index.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `workflow-recall-leakage.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
+- `workflow-unscheduled-treatment.html` — icon=True; nav=['How It Works', 'Calculator', 'Resources']; standalone CTA=1; H1=1
