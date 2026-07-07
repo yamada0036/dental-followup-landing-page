@@ -1,48 +1,43 @@
-# Cumulative Package — Sprint 1 + Sprint 2 + Sprint 3
+# Cumulative Package — SEO Sprint 1 + 2 + 3 + Template/Discovery Fix
 
-Yes: this package is cumulative.
+This package is standalone for the SEO patch.
 
-The earlier `Praxora_SEO_Sprint_2.zip` was **not fully standalone**. It assumed Sprint 1 had already been applied. It included the Sprint 2 comparison pages and the Sprint 1 pages that Sprint 2 needed to modify, but it did not repeat every unchanged Sprint 1 file, including the full Unscheduled Treatment page.
+It includes the complete SEO content created in Sprint 1, Sprint 2, and Sprint 3, plus the article-template and discovery fixes identified after production review.
 
-`Praxora_SEO_Sprint_3_CUMULATIVE.zip` fixes that.
+## Sprint 1
 
-## Included from Sprint 1
+- Follow-Up Leakage pillar
+- Missed Call Recovery
+- Unscheduled Treatment Follow-Up
+- Recall Recovery
 
-- `resources/follow-up-leakage-dental-practice/index.html`
-- `workflow-unscheduled-treatment.html`
-- `missed-calls.html`
-- `workflow-recall-leakage.html`
-- Sprint 1 metadata, deep content, CTAs, and internal linking baseline
+## Sprint 2
 
-## Included from Sprint 2
+- AI Dental Receptionist vs Follow-Up Recovery
+- Missed Call Text-Back vs Missed Call Recovery
+- Dental Recall Software vs Recall Recovery
 
-- `resources/ai-dental-receptionist-vs-follow-up-recovery/index.html`
-- `resources/missed-call-text-back-vs-recovery/index.html`
-- `resources/dental-recall-software-vs-recovery/index.html`
-- Sprint 2 comparison-page internal links
+## Sprint 3
 
-## Added in Sprint 3
+- MaxAssist Alternatives
+- RecallMax Alternatives
+- Weave vs Follow-Up Recovery
+- Dental Intelligence vs Follow-Up Recovery
 
-- `resources/maxassist-alternatives-dental-follow-up/index.html`
-- `resources/recallmax-alternatives-dental-follow-up/index.html`
-- `resources/weave-vs-follow-up-recovery/index.html`
-- `resources/dental-intelligence-vs-follow-up-recovery/index.html`
-- New competitor-evaluation internal links
-- Cumulative sitemap
-- Research notes and claim guardrails
+## Fixes added after production review
 
-## Important
+- Compact article hero
+- Smaller article H1/H2 typography
+- Editorial article layout instead of giant glass-card sections
+- Article body no longer hidden behind a single `reveal`
+- `On this page` navigation for all 11 SEO articles
+- `Comparison at a glance` blocks for the 7 Sprint 2/3 comparison and interception pages
+- Menu breakpoint moved to 1280px to prevent medium-desktop header crowding/clipping
+- New `/resources/` hub linking every SEO page
+- Updated sitemap including `/resources/`
 
-Apply this package to the repository as one cumulative SEO patch.
+## Safe overwrite scope
 
-It does not include or modify:
+Copy the package contents to the repository root and allow matching files to be overwritten.
 
-- `index.html`
-- `styles.css`
-- `script.js`
-- `api/`
-- Calculator formulas
-- Google Analytics
-- UTM logic
-- Supabase
-- Resend / email logic
+This package does not contain `index.html`, `script.js`, `api/`, Calculator files, Supabase code, Resend code, or email logic.
