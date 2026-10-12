@@ -23,6 +23,26 @@ Revenue Leak Calculator
 
 The site remains a static HTML/CSS/vanilla JavaScript website deployed on Vercel.
 
+Production URL: **https://www.getpraxora.com**.
+
+All page canonicals, social metadata, JSON-LD identifiers, sitemap entries, and
+transactional Recovery Kit email links use this primary domain. `vercel.json`
+permanently redirects the old production Vercel hostname and `getpraxora.com`
+to the primary domain while retaining page paths and query parameters. Preview
+deployment hostnames are not matched by those domain rules.
+
+Keep both custom domains assigned to this Vercel project with working DNS and
+HTTPS. The Vercel domain setting should redirect the apex to `www`, never the
+reverse. Domain registration alone does not configure hosting.
+
+After deployment, verify the new Google Search Console property and submit
+`https://www.getpraxora.com/sitemap.xml`. Keep the existing Google verification
+file. Review the GA4 web stream's website URL and any external campaign links.
+Email sender addresses are configured separately via `PRAXORA_FROM_EMAIL`; a
+website domain migration does not automatically verify a new Resend sender.
+
+Run the local SEO validation with `python3 scripts/check_seo.py`.
+
 P0 conversion endpoints live in `api/` as Vercel Serverless Functions:
 
 - `POST /api/lead` stores Calculator leads and sends Email 1.

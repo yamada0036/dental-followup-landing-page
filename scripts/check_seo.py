@@ -10,7 +10,8 @@ import re
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://dental-followup-landing-page.vercel.app'
+BASE = 'https://www.getpraxora.com'
+LEGACY_HOST = 'dental-followup-landing-page.vercel.app'
 
 class Page(HTMLParser):
     def __init__(self, path):
@@ -48,6 +49,7 @@ def main():
     articles = 0
     for path, page in pages.items():
         label = str(path.relative_to(ROOT))
+        assert LEGACY_HOST not in page.raw, (label, 'legacy production domain')
         assert len(page.values('link', 'rel', 'canonical', 'href')) == 1, label
         canonical = page.canonical
         assert canonical.startswith(BASE + '/') and local_file(canonical) == path, label
@@ -61,6 +63,9 @@ def main():
             assert len(page.meta(name)) == 1 and page.meta(name)[0], (label, name)
         descriptions.append(page.meta('description')[0])
         assert page.meta('og:url') == [canonical], label
+        for name in ['og:image', 'twitter:image']:
+            image = page.meta(name)[0]
+            assert image.startswith(BASE + '/') and local_file(image).is_file(), (label, name)
         ids = [a['id'] for _, a in page.tags if 'id' in a]
         assert len(ids) == len(set(ids)), (label, 'duplicate IDs')
         schemas = re.findall(r'<script type="application/ld\+json">(.*?)</script>', page.raw, re.S)
@@ -104,7 +109,20 @@ def main():
     assert BASE + '/sitemap.xml' in (ROOT / 'robots.txt').read_text(encoding='utf-8-sig')
     assert (ROOT / 'googlea050d084b5f189f3.html').read_text().strip() == 'google-site-verification: googlea050d084b5f189f3.html'
     config = json.loads((ROOT / 'vercel.json').read_text())
-    assert config['redirects'] == [{'source': '/index.html', 'destination': '/', 'permanent': True}]
+    redirects = config['redirects']
+    assert {'source': '/index.html', 'destination': '/', 'permanent': True} in redirects
+    for host in [LEGACY_HOST, 'getpraxora.com']:
+        rules = [r for r in redirects if r.get('has') == [{'type': 'host', 'value': host}]]
+        assert len(rules) == 1, ('missing or duplicate domain redirect', host)
+        assert rules[0]['source'] == '/:path*' and rules[0]['destination'] == BASE + '/:path*'
+        assert rules[0]['permanent'] is True, ('domain redirect must be permanent', host)
+    # Only the two production aliases should match the domain redirects.
+    # Never redirect the primary host back to itself or capture preview deployments.
+    assert len(redirects) == 3, 'review additional redirects for domain loops'
+    for folder in ['api', 'assets']:
+        for path in (ROOT / folder).rglob('*'):
+            if path.is_file() and path.suffix in ('.js', '.svg'):
+                assert LEGACY_HOST not in path.read_text(encoding='utf-8-sig'), str(path)
     css = (ROOT / 'styles.css').read_text()
     assert re.search(r'\.reveal\s*\{\s*opacity:\s*1;', css), 'content must be visible without JS'
     print(f'PASS: {len(pages)} pages, {articles} article/breadcrumb graphs, {len(urls)} sitemap URLs, {links} internal links; metadata, anchors and assets valid.')

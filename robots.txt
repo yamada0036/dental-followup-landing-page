@@ -1,4 +1,4 @@
 ﻿User-agent: *
 Allow: /
 
-Sitemap: https://dental-followup-landing-page.vercel.app/sitemap.xml
+Sitemap: https://www.getpraxora.com/sitemap.xml

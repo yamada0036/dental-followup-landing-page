@@ -20,7 +20,7 @@ const { normalizeCalculatorInputs, calculateResults } = require('./_calculator')
 function buildBreakdownEmail(lead) {
   const largestLeakName = leakDisplayNames[lead.largest_leak] || 'Follow-Up Leakage';
   const diagnosis = leakDiagnoses[lead.largest_leak] || '';
-  const recoveryKitUrl = 'https://dental-followup-landing-page.vercel.app/follow-up-recovery-kit/';
+  const recoveryKitUrl = 'https://www.getpraxora.com/follow-up-recovery-kit/';
   return `Hi ${lead.first_name},
 
 Based on the information you entered, your largest estimated follow-up gap appears to be:
