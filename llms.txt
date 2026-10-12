@@ -1,0 +1,42 @@
+# Praxora
+
+> Praxora is an AI-assisted, human-reviewed patient follow-up recovery service for dental practices. It helps dental teams recover missed calls, follow up on unscheduled treatment, and reactivate overdue recall patients by turning each missed opportunity into a clear next action with an owner and a tracked outcome.
+
+Praxora focuses on "follow-up leakage": patient intent appears (a call, a treatment plan, a recall status), but no one owns the next action, so the opportunity is lost. Its workflow is Find, Classify, Prioritize, Human Review, Follow Up, Recover. Staff judgment stays in the loop. Practices can start with a free revenue leak calculator or a free follow-up leak review; neither requires patient data or a system integration.
+
+## Start here
+
+- [Free Dental Revenue Leak Calculator](https://www.getpraxora.com/dental-revenue-leak-calculator/): Estimate missed-call, unscheduled-treatment and overdue-recall opportunities. No patient data required.
+- [Free Follow-Up Leak Review](https://www.getpraxora.com/free-missed-revenue-audit.html): Request a free workflow review covering missed calls, unscheduled treatment and overdue recall.
+- [Home](https://www.getpraxora.com/): Overview of Praxora's dental patient follow-up recovery approach.
+
+## Workflows
+
+- [Dental Missed Call Recovery Workflow](https://www.getpraxora.com/missed-calls.html): Going beyond missed call text-backs with context, ownership, next action and booking outcomes.
+- [Unscheduled Treatment Follow-Up](https://www.getpraxora.com/workflow-unscheduled-treatment.html): Classifying why follow-up stopped and prioritizing next actions.
+- [Dental Recall Recovery Workflow](https://www.getpraxora.com/workflow-recall-leakage.html): Why a recall list is not a recovery workflow.
+- [Example Workflow Teardown: Missed Implant Consultation](https://www.getpraxora.com/workflow-missed-implant-consult.html): Example using simulated details, not customer results.
+
+## Guides
+
+- [What Is Dental Follow-Up Leakage?](https://www.getpraxora.com/resources/follow-up-leakage-dental-practice/)
+- [Automated Dental Follow-Up vs Call Lists](https://www.getpraxora.com/resources/automated-dental-follow-up-vs-call-list/)
+- [Dental Treatment Follow-Up by Patient Intent](https://www.getpraxora.com/resources/dental-treatment-follow-up-by-patient-intent/)
+- [Dental Follow-Up Software Pricing Guide](https://www.getpraxora.com/resources/dental-follow-up-software-pricing/)
+- [Open Dental Follow-Up Integration Guide](https://www.getpraxora.com/resources/open-dental-follow-up-integration/)
+- [Dental Post-Op Follow-Up Automation Guide](https://www.getpraxora.com/resources/dental-post-op-follow-up-automation/)
+
+## Comparisons
+
+- [AI Dental Receptionist vs Follow-Up Recovery](https://www.getpraxora.com/resources/ai-dental-receptionist-vs-follow-up-recovery/)
+- [Missed Call Text-Back vs Missed Call Recovery](https://www.getpraxora.com/resources/missed-call-text-back-vs-recovery/)
+- [Dental Recall Software vs Recall Recovery Workflow](https://www.getpraxora.com/resources/dental-recall-software-vs-recovery/)
+- [Weave vs Follow-Up Recovery](https://www.getpraxora.com/resources/weave-vs-follow-up-recovery/)
+- [Dental Intelligence vs Follow-Up Recovery](https://www.getpraxora.com/resources/dental-intelligence-vs-follow-up-recovery/)
+- [MaxAssist Alternatives for Dental Follow-Up](https://www.getpraxora.com/resources/maxassist-alternatives-dental-follow-up/)
+- [RecallMax Alternatives for Dental Follow-Up](https://www.getpraxora.com/resources/recallmax-alternatives-dental-follow-up/)
+
+## Optional
+
+- [All Resources](https://www.getpraxora.com/resources/)
+- [Privacy](https://www.getpraxora.com/privacy/)
