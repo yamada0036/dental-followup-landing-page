@@ -232,6 +232,7 @@ function initCalculator() {
         form.innerHTML = '<div class="success-panel"><h2>Your results were saved, but we could not send the email right now.</h2><p>You can still view the Recovery Kit and request a free workflow review.</p><div class="form-actions"><a class="button primary" href="/follow-up-recovery-kit/">View the Recovery Kit</a><a class="button ghost" href="/free-missed-revenue-audit.html">Get a Free Follow-Up Leak Review</a></div></div>';
       }
       safeTrack('calculator_email_submit_success', { largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
+      safeTrack('generate_lead', { lead_source: 'revenue_leak_calculator', largest_leak: calculatorState.results.largestLeak, ...calculatorState.utm });
     } catch (error) {
       status.innerHTML = '<strong>We could not send your recovery breakdown right now.</strong><br>Your calculator results are still available on this page. Please try submitting your email again.';
       status.classList.add('error'); button.disabled = false; button.textContent = 'Try Again';

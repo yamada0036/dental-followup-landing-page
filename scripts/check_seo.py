@@ -118,12 +118,13 @@ def main():
         assert rules[0]['permanent'] is True, ('domain redirect must be permanent', host)
     # Only the two production aliases should match the domain redirects.
     # Never redirect the primary host back to itself or capture preview deployments.
-    assert len(redirects) == 3, 'review additional redirects for domain loops'
+    assert {'source': '/:path*/index.html', 'destination': '/:path*/', 'permanent': True} in redirects
+    assert len(redirects) == 4, 'review additional redirects for domain loops'
     for folder in ['api', 'assets']:
         for path in (ROOT / folder).rglob('*'):
             if path.is_file() and path.suffix in ('.js', '.svg'):
                 assert LEGACY_HOST not in path.read_text(encoding='utf-8-sig'), str(path)
-    css = (ROOT / 'styles.css').read_text()
+    css = (ROOT / 'styles.css').read_text(encoding='utf-8-sig')
     assert re.search(r'\.reveal\s*\{\s*opacity:\s*1;', css), 'content must be visible without JS'
     print(f'PASS: {len(pages)} pages, {articles} article/breadcrumb graphs, {len(urls)} sitemap URLs, {links} internal links; metadata, anchors and assets valid.')
 

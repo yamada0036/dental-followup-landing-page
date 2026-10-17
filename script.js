@@ -40,18 +40,23 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
 }
 
 const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+const currentUtm = {};
 
 function persistUtmParameters() {
   const params = new URLSearchParams(window.location.search);
   utmKeys.forEach((key) => {
     const value = params.get(key);
-    if (value) sessionStorage.setItem(`praxora_${key}`, value.slice(0, 120));
+    if (value) {
+      currentUtm[key] = value.slice(0, 120);
+      try { sessionStorage.setItem(`praxora_${key}`, currentUtm[key]); } catch (_) { /* Storage can be disabled. */ }
+    }
   });
 }
 
 function getStoredUtmParameters() {
   return utmKeys.reduce((values, key) => {
-    values[key] = sessionStorage.getItem(`praxora_${key}`) || '';
+    values[key] = currentUtm[key] || '';
+    try { values[key] = values[key] || sessionStorage.getItem(`praxora_${key}`) || ''; } catch (_) { /* Keep the current-page attribution. */ }
     return values;
   }, {});
 }
@@ -59,23 +64,30 @@ function getStoredUtmParameters() {
 persistUtmParameters();
 window.PraxoraUtm = { persist: persistUtmParameters, get: getStoredUtmParameters };
 
+// Only the canonical production site contributes to the production GA4 property.
+const productionAnalytics = window.location.hostname === 'www.getpraxora.com';
+let analyticsState = productionAnalytics ? 'pending' : 'disabled';
+const pendingEvents = [];
+
 function trackEvent(eventName, parameters = {}) {
-  if (typeof window.gtag === 'function') {
+  if (analyticsState === 'disabled') return;
+  if (analyticsState === 'ready' && typeof window.gtag === 'function') {
     window.gtag('event', eventName, parameters);
     return;
   }
-  console.info('[analytics]', eventName, parameters);
+  // Views and early interactions may happen before /api/config resolves.
+  if (pendingEvents.length < 100) pendingEvents.push([eventName, { ...parameters }]);
 }
 window.trackEvent = trackEvent;
 
 async function loadAnalytics() {
-  if (typeof window.gtag === 'function') return;
+  if (!productionAnalytics) return;
   try {
     const response = await fetch('/api/config');
-    if (!response.ok) return;
+    if (!response.ok) throw new Error('Analytics configuration unavailable.');
     const config = await response.json();
     const measurementId = config.gaMeasurementId;
-    if (!measurementId || !/^G-[A-Z0-9]+$/i.test(measurementId)) return;
+    if (!measurementId || !/^G-[A-Z0-9]+$/i.test(measurementId)) throw new Error('Analytics is not configured.');
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = function gtag(){ window.dataLayer.push(arguments); };
@@ -85,7 +97,11 @@ async function loadAnalytics() {
     document.head.appendChild(script);
     window.gtag('js', new Date());
     window.gtag('config', measurementId, { send_page_view: true });
+    analyticsState = 'ready';
+    pendingEvents.splice(0).forEach(([name, parameters]) => trackEvent(name, parameters));
   } catch (error) {
+    analyticsState = 'disabled';
+    pendingEvents.length = 0;
     console.info('[analytics_config]', error.message);
   }
 }
@@ -156,6 +172,7 @@ function bindLeakReviewForm() {
         }
       }
       trackEvent('leak_review_submit_success', getStoredUtmParameters());
+      trackEvent('generate_lead', { lead_source: 'leak_review', ...getStoredUtmParameters() });
     } catch (error) {
       status.innerHTML = '<strong>We could not submit your review request right now.</strong><br>Please try again.';
       status.classList.add('error');
