@@ -96,6 +96,25 @@ Set `PRAXORA_GA_MEASUREMENT_ID` to a GA4 measurement ID such as `G-XXXXXXXXXX`. 
 
 Frontend events are sent through `trackEvent()` after `gtag.js` is loaded from `/api/config`. Do not send names, emails, practice names, or raw form text to Google Analytics.
 
+Production analytics only runs on `www.getpraxora.com`. `/api/config` returns the
+measurement ID only when the request host is the canonical hostname.
+Preview deployment hostnames and localhost do not
+send events to the production property. Early events are queued until configuration
+loads; disabled analytics or unavailable session storage must not break the forms.
+
+Both lead forms emit the GA4 recommended `generate_lead` event only after a
+successful API response. `lead_source` distinguishes `leak_review` from
+`revenue_leak_calculator`. Existing funnel events remain available. A saved lead
+counts even if its confirmation email fails; the UI separately reports email status.
+In GA4, mark `generate_lead` as a key event and register `lead_source` as an
+event-scoped custom dimension if source-level reporting is needed. This code does
+not change GA4 property settings or backfill historical events.
+
+Run analytics regression checks with `node --test scripts/analytics.test.cjs`.
+After deploying, verify one real successful submission in GA4 DebugView and
+confirm the stored lead and email delivery separately. Local tests use mocked
+services and do not establish production database or email health.
+
 ## Important Files
 
 - `index.html` - homepage
