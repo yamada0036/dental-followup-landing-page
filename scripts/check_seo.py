@@ -107,8 +107,8 @@ def main():
     kit = pages[ROOT / 'follow-up-recovery-kit/index.html']
     assert kit.meta('robots') == ['noindex, follow'], 'preserve recovery kit funnel policy'
     assert BASE + '/sitemap.xml' in (ROOT / 'robots.txt').read_text(encoding='utf-8-sig')
-    assert (ROOT / 'googlea050d084b5f189f3.html').read_text().strip() == 'google-site-verification: googlea050d084b5f189f3.html'
-    config = json.loads((ROOT / 'vercel.json').read_text())
+    assert (ROOT / 'googlea050d084b5f189f3.html').read_text(encoding='utf-8-sig').strip() == 'google-site-verification: googlea050d084b5f189f3.html'
+    config = json.loads((ROOT / 'vercel.json').read_text(encoding='utf-8-sig'))
     redirects = config['redirects']
     assert {'source': '/index.html', 'destination': '/', 'permanent': True} in redirects
     for host in [LEGACY_HOST, 'getpraxora.com']:
