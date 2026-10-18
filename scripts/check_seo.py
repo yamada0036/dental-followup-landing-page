@@ -107,8 +107,8 @@ def main():
     kit = pages[ROOT / 'follow-up-recovery-kit/index.html']
     assert kit.meta('robots') == ['noindex, follow'], 'preserve recovery kit funnel policy'
     assert BASE + '/sitemap.xml' in (ROOT / 'robots.txt').read_text(encoding='utf-8-sig')
-    assert (ROOT / 'googlea050d084b5f189f3.html').read_text().strip() == 'google-site-verification: googlea050d084b5f189f3.html'
-    config = json.loads((ROOT / 'vercel.json').read_text())
+    assert (ROOT / 'googlea050d084b5f189f3.html').read_text(encoding='utf-8-sig').strip() == 'google-site-verification: googlea050d084b5f189f3.html'
+    config = json.loads((ROOT / 'vercel.json').read_text(encoding='utf-8-sig'))
     redirects = config['redirects']
     assert {'source': '/index.html', 'destination': '/', 'permanent': True} in redirects
     for host in [LEGACY_HOST, 'getpraxora.com']:
@@ -123,7 +123,7 @@ def main():
         for path in (ROOT / folder).rglob('*'):
             if path.is_file() and path.suffix in ('.js', '.svg'):
                 assert LEGACY_HOST not in path.read_text(encoding='utf-8-sig'), str(path)
-    css = (ROOT / 'styles.css').read_text()
+    css = (ROOT / 'styles.css').read_text(encoding='utf-8-sig')
     assert re.search(r'\.reveal\s*\{\s*opacity:\s*1;', css), 'content must be visible without JS'
     print(f'PASS: {len(pages)} pages, {articles} article/breadcrumb graphs, {len(urls)} sitemap URLs, {links} internal links; metadata, anchors and assets valid.')
 
