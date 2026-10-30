@@ -1,4 +1,7 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
 
 Sitemap: https://www.getpraxora.com/sitemap.xml
+Disallow: /*.md$
+Disallow: /docs/
+Disallow: /scripts/
