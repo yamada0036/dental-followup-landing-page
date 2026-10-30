@@ -84,6 +84,10 @@ def main():
             assert crumbs[-1]['item'] == canonical, label
             assert page.values('nav', 'aria-label', 'Breadcrumb', 'class') == ['breadcrumbs'], label
         for tag, attrs in page.tags:
+            if tag == 'img':
+                assert 'alt' in attrs, (label, 'image missing alt')
+                if 'workflow.svg' in attrs.get('src', ''):
+                    assert attrs['alt'].strip() and attrs.get('width') and attrs.get('height'), (label, 'workflow image metadata')
             key = 'href' if tag in ('a', 'link') else 'src' if tag in ('img', 'script') else None
             if not key or key not in attrs:
                 continue
@@ -101,7 +105,15 @@ def main():
     for label, values in [('titles', titles), ('descriptions', descriptions), ('canonicals', canonicals)]:
         assert not [v for v, n in Counter(values).items() if n > 1], ('duplicates', label)
     sitemap = ET.parse(ROOT / 'sitemap.xml')
-    urls = [el.text for el in sitemap.findall('.//{*}loc')]
+    urls = [el.text for el in sitemap.findall('./{*}url/{*}loc')]
+    for entry in sitemap.findall('./{*}url'):
+        page_url = entry.find('{*}loc').text
+        for image in entry.findall('{http://www.google.com/schemas/sitemap-image/1.1}image'):
+            image_url = image.find('{http://www.google.com/schemas/sitemap-image/1.1}loc').text
+            assert image_url.startswith(BASE + '/') and local_file(image_url).is_file(), ('image sitemap target', image_url)
+            page = pages[local_file(page_url)]
+            sources = [urljoin(page_url, a.get('src', '')) for t, a in page.tags if t == 'img']
+            assert image_url in sources, ('sitemap image must appear on its page', page_url, image_url)
     indexable = {p.canonical for p in pages.values() if not any('noindex' in v for v in p.meta('robots'))}
     assert len(urls) == len(set(urls)) and set(urls) == indexable, 'sitemap/indexable page mismatch'
     kit = pages[ROOT / 'follow-up-recovery-kit/index.html']

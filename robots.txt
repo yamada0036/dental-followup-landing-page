@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://www.getpraxora.com/sitemap.xml
 Disallow: /*.md$
+Disallow: /*.md?*
 Disallow: /docs/
 Disallow: /scripts/
+
+Sitemap: https://www.getpraxora.com/sitemap.xml

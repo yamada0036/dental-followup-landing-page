@@ -1035,3 +1035,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .seo-faq p { color: var(--muted); font-size: 1rem; line-height: 1.75; }
 .seo-faq a { color: #91e5ff; text-decoration: underline; text-underline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .reveal.reveal-pending { opacity: 1; transform: none; transition: none; } }
+
+/* Workflow images remain readable at narrow widths; the region supports keyboard scrolling. */
+.workflow-chart { margin: 24px 0; }
+.workflow-chart-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 20px; background: #f4f7fc; }
+.workflow-chart-scroll img { display: block; width: 100%; min-width: 640px; max-width: none; height: auto; }
+.workflow-chart-scroll:focus-visible { outline: 3px solid #8de7ff; outline-offset: 4px; }
+.workflow-chart figcaption { margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.template-message { margin: 20px 0; padding: 20px; border-left: 3px solid #8de7ff; background: rgba(255,255,255,.04); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+.template-copy-status { display: block; min-height: 1.6em; margin-top: 10px; color: var(--muted); }

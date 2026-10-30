@@ -1,0 +1,47 @@
+UNSCHEDULED DENTAL TREATMENT TEXT SAMPLES
+Praxora — https://www.getpraxora.com/resources/unscheduled-dental-treatment-text-samples/
+
+Review each message, replace placeholders and confirm current status and contact preferences before sending. Keep private details in your practice's approved channel. Respect opt-outs.
+
+1. When cost is the obstacle
+
+Hi [First name], this is [Practice]. Would a short call to review the options we discussed be helpful? Reply YES and our team will follow up, or call [Phone]. Reply STOP to opt out.
+
+Usage note: Use this when a patient asked about cost. Offer a conversation about verified options without promising financing approval.
+
+---
+
+2. When time is the obstacle
+
+Hi [First name], this is [Practice]. Would you like help finding an appointment that fits your schedule? Reply with a good time for us to call, or call [Phone]. Reply STOP to opt out.
+
+Usage note: Ask about availability first. Confirm real appointment openings before offering a specific slot; do not imply that a place has been held.
+
+---
+
+3. When the patient is still thinking
+
+Hi [First name], this is [Practice]. Just checking whether you have any questions after our last conversation. Would you like a call from our team? Reply YES or call [Phone]. Reply STOP to opt out.
+
+Usage note: Reopen the conversation without assuming the patient accepted treatment. Route clinical questions to the care team.
+
+---
+
+4. When it is a family decision
+
+Hi [First name], this is [Practice]. You mentioned wanting time to discuss your options. Would you like us to check back on a date that works for you? Reply with a preferred date, or call [Phone]. Reply STOP to opt out.
+
+Usage note: Use this only when the patient actually asked for decision time. Agree on a follow-up date instead of inventing an estimate deadline.
+
+---
+
+5. When a benefits review may help
+
+Hi [First name], this is [Practice]. Would you like our team to review your benefit questions before you choose an appointment? Reply YES or call [Phone]. Benefits and coverage need confirmation. Reply STOP to opt out.
+
+Usage note: Confirm the patient's plan and benefit dates before discussing expiry. This message does not promise coverage, reimbursement or savings.
+
+Estimate your workflow exposure:
+https://www.getpraxora.com/dental-revenue-leak-calculator/
+
+These templates do not send messages or connect to a practice system.

@@ -3,13 +3,23 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "dental-followup-landing-page.vercel.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
       "destination": "https://www.getpraxora.com/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "getpraxora.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
       "destination": "https://www.getpraxora.com/:path*",
       "permanent": true
     },
@@ -22,6 +32,35 @@
       "source": "/:path*/index.html",
       "destination": "/:path*/",
       "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/docs/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.md",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/resources/unscheduled-dental-treatment-text-samples/unscheduled-dental-treatment-text-samples.txt",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ]
 }

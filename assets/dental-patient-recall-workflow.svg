@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+<title id="title">Dental patient recall workflow chart</title>
+<desc id="desc">Dental patient recall workflow chart showing current status checks, staff review, approved outreach and recorded booking or opt-out outcomes. Close resolved tasks and route exceptions before continuing.</desc>
+<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#526b83" stroke-width="2"/></marker></defs>
+<rect width="1200" height="1000" rx="28" fill="#f4f7fc"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="64" y="64" font-size="18" font-weight="700" letter-spacing="3" fill="#5752c9">PRAXORA / WORKFLOW GUIDE</text>
+<text x="64" y="118" font-size="38" font-weight="700" fill="#122b42">Dental patient recall workflow</text>
+<text x="64" y="160" font-size="23" fill="#425b71">From an overdue list to a reviewed recall outcome</text>
+<rect x="64" y="208" width="770" height="124" rx="18" fill="white" stroke="#c3d4e6" stroke-width="2"/>
+<circle cx="108" cy="248" r="20" fill="#5752c9"/><text x="108" y="255" text-anchor="middle" font-size="21" font-weight="700" fill="white">1</text>
+<text x="146" y="256" font-size="29" font-weight="700" fill="#122b42">Review overdue patients</text>
+<text x="92" y="300" font-size="23" fill="#425b71">Check recall status, appointments and contact preferences.</text>
+<path d="M449 332 V366" stroke="#526b83" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+<rect x="64" y="374" width="770" height="124" rx="18" fill="white" stroke="#c3d4e6" stroke-width="2"/>
+<circle cx="108" cy="414" r="20" fill="#5752c9"/><text x="108" y="421" text-anchor="middle" font-size="21" font-weight="700" fill="white">2</text>
+<text x="146" y="422" font-size="29" font-weight="700" fill="#122b42">Plan a small batch</text>
+<text x="92" y="466" font-size="23" fill="#425b71">Use the agreed timing and assign a named owner.</text>
+<path d="M449 498 V532" stroke="#526b83" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+<rect x="64" y="540" width="770" height="124" rx="18" fill="white" stroke="#c3d4e6" stroke-width="2"/>
+<circle cx="108" cy="580" r="20" fill="#5752c9"/><text x="108" y="587" text-anchor="middle" font-size="21" font-weight="700" fill="white">3</text>
+<text x="146" y="588" font-size="29" font-weight="700" fill="#122b42">Review and contact</text>
+<text x="92" y="632" font-size="23" fill="#425b71">Offer scheduling help through an approved channel.</text>
+<path d="M449 664 V698" stroke="#526b83" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+<rect x="64" y="706" width="770" height="124" rx="18" fill="white" stroke="#c3d4e6" stroke-width="2"/>
+<circle cx="108" cy="746" r="20" fill="#125f69"/><text x="108" y="753" text-anchor="middle" font-size="21" font-weight="700" fill="white">4</text>
+<text x="146" y="754" font-size="29" font-weight="700" fill="#122b42">Record the outcome</text>
+<text x="92" y="798" font-size="23" fill="#425b71">Booked, later follow-up, declined, or unable to reach.</text>
+
+<path d="M834 270 H884" stroke="#526b83" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="898" y="224" width="248" height="100" rx="14" fill="#e5edf6"/>
+<text x="916" y="261" font-size="22" font-weight="700" fill="#122b42">Already booked?</text><text x="916" y="295" font-size="20" fill="#425b71">Update the queue.</text>
+<path d="M834 602 H884" stroke="#526b83" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="898" y="556" width="248" height="100" rx="14" fill="#e0f1f2"/>
+<text x="916" y="593" font-size="22" font-weight="700" fill="#122b42">Patient opts out?</text><text x="916" y="627" font-size="19" fill="#425b71">Stop further outreach.</text>
+<text x="64" y="902" font-size="22" font-weight="700" fill="#122b42">A reply is a next step. A booking is not completed care or collected revenue.</text>
+<text x="64" y="945" font-size="20" fill="#425b71">Illustrative process, not a product screenshot. Human review remains part of the workflow.</text>
+</g></svg>
