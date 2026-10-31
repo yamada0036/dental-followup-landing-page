@@ -1044,3 +1044,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .workflow-chart figcaption { margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.7; }
 .template-message { margin: 20px 0; padding: 20px; border-left: 3px solid #8de7ff; background: rgba(255,255,255,.04); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
 .template-copy-status { display: block; min-height: 1.6em; margin-top: 10px; color: var(--muted); }
+.band-table-wrap { margin-top: 16px; overflow-x: auto; }
+.band-table { width: 100%; min-width: 640px; border-collapse: collapse; }
+.band-table caption { caption-side: bottom; padding-top: 12px; color: var(--muted); font-size: 14px; line-height: 1.6; text-align: left; }
+.band-table th, .band-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.12); vertical-align: top; text-align: left; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.band-table th { color: #fff; font-size: 13px; font-weight: 760; letter-spacing: .04em; text-transform: uppercase; }
+.coming-note { margin-top: 14px; padding: 16px 18px; border: 1px dashed rgba(255,255,255,.2); border-radius: 16px; color: var(--muted); }
