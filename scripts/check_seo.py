@@ -41,7 +41,13 @@ def local_file(url):
 
 
 def main():
-    pages = {p: Page(p) for p in ROOT.rglob('*.html') if not p.name.startswith('google') and '.git' not in p.parts}
+    pages = {
+        p: Page(p)
+        for p in ROOT.rglob('*.html')
+        if not p.name.startswith('google')
+        and '.git' not in p.parts
+        and not any(part.startswith('_') for part in p.relative_to(ROOT).parts)
+    }
     titles = []
     descriptions = []
     canonicals = []
@@ -115,23 +121,93 @@ def main():
             sources = [urljoin(page_url, a.get('src', '')) for t, a in page.tags if t == 'img']
             assert image_url in sources, ('sitemap image must appear on its page', page_url, image_url)
     indexable = {p.canonical for p in pages.values() if not any('noindex' in v for v in p.meta('robots'))}
-    assert len(urls) == len(set(urls)) and set(urls) == indexable, 'sitemap/indexable page mismatch'
+    kit_url = BASE + '/follow-up-recovery-kit/'
+    assert kit_url not in indexable
+    assert len(urls) == len(set(urls)) and set(urls) == indexable | {kit_url}, 'sitemap/indexable page mismatch'
     kit = pages[ROOT / 'follow-up-recovery-kit/index.html']
     assert kit.meta('robots') == ['noindex, follow'], 'preserve recovery kit funnel policy'
     assert BASE + '/sitemap.xml' in (ROOT / 'robots.txt').read_text(encoding='utf-8-sig')
     assert (ROOT / 'googlea050d084b5f189f3.html').read_text(encoding='utf-8-sig').strip() == 'google-site-verification: googlea050d084b5f189f3.html'
     config = json.loads((ROOT / 'vercel.json').read_text(encoding='utf-8-sig'))
+    # _config.yml would otherwise make Vercel build the GitHub Pages redirect site.
+    assert config.get('framework') is None, 'Vercel must stay a static deploy'
     redirects = config['redirects']
-    assert {'source': '/index.html', 'destination': '/', 'permanent': True} in redirects
+    alias_pairs = [
+        ('/missed-calls', '/missed-calls.html'),
+        ('/missed-calls/', '/missed-calls.html'),
+        ('/workflow-unscheduled-treatment', '/workflow-unscheduled-treatment.html'),
+        ('/workflow-unscheduled-treatment/', '/workflow-unscheduled-treatment.html'),
+        ('/workflow-recall-leakage', '/workflow-recall-leakage.html'),
+        ('/workflow-recall-leakage/', '/workflow-recall-leakage.html'),
+        ('/workflow-missed-implant-consult', '/workflow-missed-implant-consult.html'),
+        ('/workflow-missed-implant-consult/', '/workflow-missed-implant-consult.html'),
+        ('/free-missed-revenue-audit', '/free-missed-revenue-audit.html'),
+        ('/free-missed-revenue-audit/', '/free-missed-revenue-audit.html'),
+        ('/index.html', '/'),
+    ]
+    production_hosts = [LEGACY_HOST, 'getpraxora.com', 'www.getpraxora.com']
+
+    def host_rule(host, source, destination):
+        return {
+            'source': source,
+            'has': [{'type': 'host', 'value': host}],
+            'destination': destination,
+            'permanent': True,
+        }
+
+    expected = []
+    for host in production_hosts:
+        for source, path in alias_pairs:
+            expected.append(host_rule(host, source, BASE + path))
+    expected.append(host_rule(LEGACY_HOST, '/:path*', BASE + '/:path*'))
+    expected.append(host_rule('getpraxora.com', '/:path*', BASE + '/:path*'))
+    expected.append({'source': '/index.html', 'destination': '/', 'permanent': True})
+    expected.append({'source': '/:path*/index.html', 'destination': '/:path*/', 'permanent': True})
+    assert redirects == expected, 'redirect list drifted'
+    for rule in redirects:
+        assert rule['permanent'] is True
+        assert LEGACY_HOST not in rule['destination']
+    # Host catch-alls stay behind the explicit aliases and do not match preview hosts
+    # or send www back to itself.
     for host in [LEGACY_HOST, 'getpraxora.com']:
-        rules = [r for r in redirects if r.get('has') == [{'type': 'host', 'value': host}]]
-        assert len(rules) == 1, ('missing or duplicate domain redirect', host)
-        assert rules[0]['source'] == '/:path*' and rules[0]['destination'] == BASE + '/:path*'
-        assert rules[0]['permanent'] is True, ('domain redirect must be permanent', host)
-    # Only the two production aliases should match the domain redirects.
-    # Never redirect the primary host back to itself or capture preview deployments.
-    assert {'source': '/:path*/index.html', 'destination': '/:path*/', 'permanent': True} in redirects
-    assert len(redirects) == 4, 'review additional redirects for domain loops'
+        catch_alls = [
+            i for i, rule in enumerate(redirects)
+            if rule.get('source') == '/:path*' and rule.get('has') == [{'type': 'host', 'value': host}]
+        ]
+        assert catch_alls == [len(alias_pairs) * len(production_hosts) + (0 if host == LEGACY_HOST else 1)]
+    assert not any(
+        rule.get('source') == '/:path*' and rule.get('has') == [{'type': 'host', 'value': 'www.getpraxora.com'}]
+        for rule in redirects
+    )
+    pages_config = (ROOT / '_config.yml').read_text(encoding='utf-8-sig')
+    assert 'theme: null' in pages_config and 'enabled: false' in pages_config
+    assert not (ROOT / '.nojekyll').exists(), 'GitHub Pages must build the Jekyll redirects'
+    published = {}
+    for path in (ROOT / '_canonical_redirects').glob('*.md'):
+        meta = {}
+        for line in path.read_text(encoding='utf-8-sig').splitlines():
+            if line.startswith('permalink:'):
+                meta['permalink'] = line.split(':', 1)[1].strip().strip('"').strip("'")
+            elif line.startswith('target:'):
+                meta['target'] = line.split(':', 1)[1].strip()
+        published[meta['permalink']] = meta['target']
+    for path, page in pages.items():
+        rel = path.relative_to(ROOT).as_posix()
+        if rel == 'index.html':
+            permalink = '/'
+        elif rel.endswith('/index.html'):
+            permalink = '/' + rel[:-len('index.html')]
+        else:
+            permalink = '/' + rel
+        assert published.get(permalink) == page.canonical, (permalink, published.get(permalink), page.canonical)
+    for stem in [
+        'missed-calls',
+        'workflow-unscheduled-treatment',
+        'workflow-recall-leakage',
+        'workflow-missed-implant-consult',
+        'free-missed-revenue-audit',
+    ]:
+        assert published.get('/' + stem + '/') == BASE + '/' + stem + '.html'
     for folder in ['api', 'assets']:
         for path in (ROOT / folder).rglob('*'):
             if path.is_file() and path.suffix in ('.js', '.svg'):

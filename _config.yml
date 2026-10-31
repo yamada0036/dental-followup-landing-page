@@ -1,0 +1,66 @@
+# GitHub Pages publish build only.
+# Project Pages cannot emit HTTP 301/308. Jekyll replaces the published HTML
+# with instant canonical redirects to https://www.getpraxora.com.
+# Vercel must keep serving this repo as a static site: vercel.json sets
+# "framework": null so this file does not switch production onto `jekyll build`.
+theme: null
+markdown: kramdown
+plugins:
+  - jekyll-optional-front-matter
+  - jekyll-default-layout
+  - jekyll-readme-index
+  - jekyll-sitemap
+  - jekyll-titles-from-headings
+collections:
+  canonical_redirects:
+    output: true
+defaults:
+  - scope:
+      path: ""
+      type: canonical_redirects
+    values:
+      layout: redirect
+      sitemap: false
+optional_front_matter:
+  enabled: false
+readme_index:
+  enabled: false
+  remove_originals: false
+exclude:
+  - dental-revenue-leak-calculator/index.html
+  - follow-up-recovery-kit/index.html
+  - free-missed-revenue-audit.html
+  - index.html
+  - missed-calls.html
+  - privacy/index.html
+  - resources/ai-dental-receptionist-vs-follow-up-recovery/index.html
+  - resources/automated-dental-follow-up-vs-call-list/index.html
+  - resources/dental-follow-up-software-pricing/index.html
+  - resources/dental-intelligence-vs-follow-up-recovery/index.html
+  - resources/dental-patient-follow-up-software/index.html
+  - resources/dental-post-op-follow-up-automation/index.html
+  - resources/dental-recall-software-vs-recovery/index.html
+  - resources/dental-treatment-follow-up-by-patient-intent/index.html
+  - resources/follow-up-leakage-dental-practice/index.html
+  - resources/index.html
+  - resources/maxassist-alternatives-dental-follow-up/index.html
+  - resources/missed-call-text-back-vs-recovery/index.html
+  - resources/open-dental-follow-up-integration/index.html
+  - resources/open-dental-unscheduled-treatment-report/index.html
+  - resources/recallmax-alternatives-dental-follow-up/index.html
+  - resources/unscheduled-dental-treatment-text-samples/index.html
+  - resources/weave-vs-follow-up-recovery/index.html
+  - workflow-missed-implant-consult.html
+  - workflow-recall-leakage.html
+  - workflow-unscheduled-treatment.html
+  - workflows/confirmations/index.html
+  - workflows/front-desk/index.html
+  - workflows/openings/index.html
+  - workflows/recall/index.html
+  - workflows/unscheduled-treatment/index.html
+  - api
+  - docs
+  - scripts
+  - README.md
+  - vendor
+  - node_modules
