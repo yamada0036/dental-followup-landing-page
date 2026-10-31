@@ -103,14 +103,28 @@ send events to the production property. Early events are queued until configurat
 loads; disabled analytics or unavailable session storage must not break the forms.
 
 Both lead forms emit the GA4 recommended `generate_lead` event only after a
-successful API response. `lead_source` distinguishes `leak_review` from
-`revenue_leak_calculator`. Existing funnel events remain available. A saved lead
-counts even if its confirmation email fails; the UI separately reports email status.
-In GA4, mark `generate_lead` as a key event and register `lead_source` as an
-event-scoped custom dimension if source-level reporting is needed. This code does
-not change GA4 property settings or backfill historical events.
+successful API response. `lead_source` and `form_name` identify the form:
+`leak_review` / `free_missed_revenue_audit` for the free missed-revenue audit,
+and `revenue_leak_calculator` for the calculator email. Event parameters do not
+include names, emails, or practice names. A saved lead counts even if its
+confirmation email fails; the UI separately reports email status.
 
-Run analytics regression checks with `node --test scripts/analytics.test.cjs`.
+`form_start` in GA4 is enhanced measurement for the first form interaction.
+`form_submit` is a reserved enhanced-measurement name and is not sent from the
+site. These forms call `preventDefault()` and submit with `fetch`, so enhanced
+measurement does not record a successful submit. Mark `generate_lead` as the
+lead key event. Do not also mark `form_start`, `leak_review_submit`, or
+`calculator_email_submit`.
+
+Showing a calculator estimate emits `calculator_complete` once, alongside the
+existing `calculator_result_view` event. Mark `calculator_complete` as the
+calculator key event. Do not mark `calculator_view`, `calculator_start`, or
+`calculator_result_view`. Register `lead_source`, `form_name`, and
+`largest_leak` as event-scoped custom dimensions if you need to break results
+down. This code does not change the measurement ID, GA4 property settings, or
+historical events.
+
+Run analytics regression checks with `node --test scripts/analytics.test.cjs scripts/conversion-events.test.cjs`.
 After deploying, verify one real successful submission in GA4 DebugView and
 confirm the stored lead and email delivery separately. Local tests use mocked
 services and do not establish production database or email health.
