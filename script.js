@@ -154,31 +154,40 @@ function bindLeakReviewForm() {
     status.textContent = 'Submitting your request...';
     trackEvent('leak_review_submit', getStoredUtmParameters());
 
+    let result;
     try {
       const response = await fetch('/api/leak-review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formPayload(form))
       });
-      const result = await response.json().catch(() => ({}));
+      result = await response.json().catch(() => ({}));
       if (!response.ok || !result.success) throw new Error('Submission failed.');
-      form.hidden = true;
-      const success = document.getElementById('leakReviewSuccess');
-      if (success) {
-        success.hidden = false;
-        const emailNotice = success.querySelector('[data-requester-email-status]');
-        if (emailNotice && result.requester_email_sent === false) {
-          emailNotice.hidden = false;
-        }
-      }
-      trackEvent('leak_review_submit_success', getStoredUtmParameters());
-      trackEvent('generate_lead', { lead_source: 'leak_review', ...getStoredUtmParameters() });
     } catch (error) {
       status.innerHTML = '<strong>We could not submit your review request right now.</strong><br>Please try again.';
       status.classList.add('error');
       button.disabled = false;
       button.textContent = originalText;
       trackEvent('leak_review_submit_error', getStoredUtmParameters());
+      return;
+    }
+
+    // form_submit is reserved for enhanced measurement, which does not see this fetch submit.
+    const attribution = getStoredUtmParameters();
+    trackEvent('leak_review_submit_success', attribution);
+    trackEvent('generate_lead', {
+      ...attribution,
+      lead_source: 'leak_review',
+      form_name: 'free_missed_revenue_audit'
+    });
+    form.hidden = true;
+    const success = document.getElementById('leakReviewSuccess');
+    if (success) {
+      success.hidden = false;
+      const emailNotice = success.querySelector('[data-requester-email-status]');
+      if (emailNotice && result.requester_email_sent === false) {
+        emailNotice.hidden = false;
+      }
     }
   });
 }
