@@ -28,8 +28,16 @@ Production URL: **https://www.getpraxora.com**.
 All page canonicals, social metadata, JSON-LD identifiers, sitemap entries, and
 transactional Recovery Kit email links use this primary domain. `vercel.json`
 permanently redirects the old production Vercel hostname and `getpraxora.com`
-to the primary domain while retaining page paths and query parameters. Preview
-deployment hostnames are not matched by those domain rules.
+to the primary domain while retaining page paths and query parameters. The same
+file also permanently redirects extensionless aliases of the root HTML pages
+(and `/index.html`) to the canonical `www` URLs before those host catch-alls.
+Preview deployment hostnames are not matched by those domain rules.
+
+GitHub Pages publishes this same branch, but it cannot emit HTTP 301 or 308.
+`_config.yml` is a Pages-only Jekyll build that publishes
+`_canonical_redirects/` as instant meta-refresh and `location.replace` pages
+pointing at the same `www` URLs. `vercel.json` sets `"framework": null` so
+Vercel keeps deploying the static HTML instead of that Jekyll output.
 
 Keep both custom domains assigned to this Vercel project with working DNS and
 HTTPS. The Vercel domain setting should redirect the apex to `www`, never the
@@ -126,6 +134,6 @@ services and do not establish production database or email health.
 - `docs/supabase-schema.sql` - database schema
 - `docs/email-sequence.md` - education sequence plan
 
-Do not delete `.nojekyll`, `googlea050d084b5f189f3.html`, `robots.txt`, `sitemap.xml`, or `assets/`.
+Do not restore `.nojekyll`. GitHub Pages must keep running the Jekyll redirect build. Do not delete `googlea050d084b5f189f3.html`, `robots.txt`, `sitemap.xml`, `_config.yml`, `_canonical_redirects/`, or `assets/`.
 
 

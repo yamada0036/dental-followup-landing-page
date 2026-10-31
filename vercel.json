@@ -1,6 +1,370 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "redirects": [
+    {
+      "source": "/missed-calls",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/missed-calls/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/",
+      "permanent": true
+    },
+    {
+      "source": "/missed-calls",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/missed-calls/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/",
+      "permanent": true
+    },
+    {
+      "source": "/missed-calls",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/missed-calls/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/missed-calls.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-unscheduled-treatment/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-unscheduled-treatment.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-recall-leakage/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-recall-leakage.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/workflow-missed-implant-consult/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/workflow-missed-implant-consult.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/free-missed-revenue-audit/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/",
+      "permanent": true
+    },
     {
       "source": "/:path*",
       "has": [

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Moved to Praxora</title>
+  <link rel="canonical" href="{{ page.target }}">
+  <meta http-equiv="refresh" content="0; url={{ page.target }}">
+  <script>location.replace({{ page.target | jsonify }});</script>
+</head>
+<body>
+  <p>This page has moved to <a href="{{ page.target }}">{{ page.target }}</a>.</p>
+</body>
+</html>
