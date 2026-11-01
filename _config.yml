@@ -35,6 +35,7 @@ exclude:
   - privacy/index.html
   - resources/ai-dental-receptionist-vs-follow-up-recovery/index.html
   - resources/automated-dental-follow-up-vs-call-list/index.html
+  - resources/demandforce-alternatives-dental-follow-up/index.html
   - resources/dental-follow-up-software-alternatives/index.html
   - resources/dental-follow-up-software-pricing/index.html
   - resources/dental-missed-call-follow-up-scripts/index.html
@@ -47,8 +48,10 @@ exclude:
   - resources/dentrix-unscheduled-treatment-report/index.html
   - resources/export-unscheduled-treatment-list-working-batch/index.html
   - resources/follow-up-leakage-dental-practice/index.html
+  - resources/lighthouse-360-vs-follow-up-recovery/index.html
   - resources/index.html
   - resources/maxassist-alternatives-dental-follow-up/index.html
+  - resources/maxassist-vs-dental-intelligence-appointment-recall/index.html
   - resources/maxassist-vs-praxora/index.html
   - resources/medspa-follow-up-recovery/index.html
   - resources/medspa-lapsed-membership-recovery/index.html
@@ -61,6 +64,8 @@ exclude:
   - resources/open-dental-unscheduled-treatment-report/index.html
   - resources/prioritize-unscheduled-treatment-by-value-expiry/index.html
   - resources/recallmax-alternatives-dental-follow-up/index.html
+  - resources/revenuewell-alternatives-dental-follow-up/index.html
+  - resources/solutionreach-alternatives-dental-follow-up/index.html
   - resources/start-dental-follow-up-without-pms-integration/index.html
   - resources/unscheduled-dental-treatment-text-samples/index.html
   - resources/weave-vs-follow-up-recovery/index.html
