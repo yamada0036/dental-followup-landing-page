@@ -61,23 +61,39 @@ Lead storage uses Supabase through server-side environment variables. Email deli
 
 ## Required Environment Variables
 
+`POST /api/leak-review` returns success only after the review is stored. Configure these in Vercel, then redeploy. Trimmed values are used; do not wrap them in quotes.
+
 ```text
 SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
+```
 
+`SUPABASE_URL` is the project URL (`https://<project>.supabase.co`), not the REST path. `SUPABASE_SERVICE_ROLE_KEY` must be the service role key. The anon key cannot insert past row level security, and that failure is returned as HTTP 500.
+
+Email delivery uses Resend. A stored review still returns success when email fails; the UI then says the confirmation email was not sent.
+
+```text
 RESEND_API_KEY
 PRAXORA_FROM_EMAIL
 PRAXORA_NOTIFICATION_EMAIL
+```
 
+`PRAXORA_NOTIFICATION_EMAIL` is the founder inbox for new review requests. `PRAXORA_FROM_EMAIL` must be a verified Resend sender.
+
+```text
 PRAXORA_GA_MEASUREMENT_ID
 RATE_LIMIT_SALT
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` must only be configured in Vercel environment variables. Do not expose them in frontend JavaScript.
 
+`RATE_LIMIT_SALT` should be a long random string. It salts hashed client addresses for the 5-request / 10-minute limit. If it is unset, the service role key is used as that salt so a missing salt does not reject the form. Set a dedicated salt so hashes stay stable when the service role key rotates.
+
+`POST /api/leak-review` and `POST /api/lead` both refuse the request when Supabase is not configured. They do not require the Resend variables in order to return success.
+
 ## Database Setup
 
-Run `docs/supabase-schema.sql` for a fresh setup, or `docs/p0-p1-migration.sql` to update an existing Supabase project, before routing production traffic.
+Run `docs/supabase-schema.sql` for a fresh setup, or `docs/p0-p1-migration.sql` to update an existing Supabase project, before routing production traffic. The review insert does not send `founder_email_status` or `requester_email_status`; those columns keep their defaults and are updated after email delivery. An older `leak_reviews` table that does not have them can still store the request. `submission_rate_limits` is required for a rate limit shared across serverless instances. If that table is missing, the function keeps the same 5-request / 10-minute limit in memory on that instance and logs that the migration still needs to be applied. Apply the migration so the limit is shared. The honeypot field is unchanged.
 
 Tables:
 
@@ -132,7 +148,7 @@ calculator key event. Do not mark `calculator_view`, `calculator_start`, or
 down. This code does not change the measurement ID, GA4 property settings, or
 historical events.
 
-Run analytics regression checks with `node --test scripts/analytics.test.cjs scripts/conversion-events.test.cjs`.
+Run analytics regression checks with `node --test scripts/analytics.test.cjs scripts/conversion-events.test.cjs scripts/leak-review.test.cjs`.
 After deploying, verify one real successful submission in GA4 DebugView and
 confirm the stored lead and email delivery separately. Local tests use mocked
 services and do not establish production database or email health.
