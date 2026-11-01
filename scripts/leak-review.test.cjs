@@ -16,6 +16,13 @@ function loadHandler() {
   return require('../api/leak-review');
 }
 
+function loadLeadHandler() {
+  delete require.cache[require.resolve('../api/lead')];
+  delete require.cache[require.resolve('../api/_utils')];
+  delete require.cache[require.resolve('../api/_calculator')];
+  return require('../api/lead');
+}
+
 function setEnv(overrides = {}) {
   const base = {
     SUPABASE_URL: 'https://example.supabase.co',
@@ -102,6 +109,13 @@ function installFetch(state) {
     if (target.includes('/rest/v1/leak_reviews') && options.method === 'POST') {
       if (state.reviewInsertStatus) return jsonResponse(state.reviewInsertStatus, { message: 'insert failed' });
       return jsonResponse(201, [{ id: 'review-1' }]);
+    }
+    if (target.includes('/rest/v1/leads') && options.method === 'POST') {
+      if (state.leadInsertStatus) return jsonResponse(state.leadInsertStatus, { message: 'insert failed' });
+      return jsonResponse(201, [{ id: 'lead-1' }]);
+    }
+    if (target.includes('/rest/v1/leads') && options.method === 'PATCH') {
+      return jsonResponse(204, '');
     }
     if (target.includes('/rest/v1/leak_reviews') && options.method === 'PATCH') {
       if (state.patchThrows) throw new Error('status update failed');
@@ -216,15 +230,30 @@ test('five prior requests from one address are rejected', async () => {
   assert.equal(reviewInserts(state).length, 0);
 });
 
-test('missing Supabase configuration fails before email delivery', async () => {
+test('missing Supabase configuration still accepts a review and sends email', async () => {
   setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
   const state = { calls: [] };
   installFetch(state);
   const handler = loadHandler();
-  const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.15' });
-  assert.equal(result.status, 500);
-  assert.equal(result.json.success, false);
-  assert.equal(state.calls.length, 0);
+  const result = await invoke(handler, {
+    body: validPayload({
+      utm_source: 'newsletter',
+      utm_medium: 'email',
+      utm_campaign: 'audit',
+      utm_content: 'hero'
+    }),
+    ip: '203.0.113.15'
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: true, requester_email_sent: true });
+  assert.equal(state.calls.some((call) => call.url.includes('supabase.co') || call.url.includes('/rest/v1/')), false);
+  const emails = state.calls.filter((call) => call.url.includes('api.resend.com'));
+  assert.equal(emails.length, 2);
+  const founder = emails.find((call) => JSON.parse(call.body).to === 'founder@getpraxora.com');
+  const founderText = JSON.parse(founder.body).text;
+  assert.match(founderText, /UTM Source: newsletter/);
+  assert.match(founderText, /UTM Campaign: audit/);
+  assert.match(founderText, /Example Dental/);
 });
 
 test('unauthorized Supabase rate-limit reads still fail closed', async () => {
@@ -273,6 +302,96 @@ test('storage failure stays a server error', async () => {
   assert.equal(result.json.success, false);
 });
 
+function captureErrors(fn) {
+  const errors = [];
+  const original = console.error;
+  console.error = (...args) => {
+    errors.push(args.map((part) => (typeof part === 'string' ? part : String(part && part.message || part))).join(' '));
+  };
+  return Promise.resolve()
+    .then(fn)
+    .finally(() => {
+      console.error = original;
+    })
+    .then((result) => ({ result, errors }));
+}
+
+test('unset Supabase and unset email still return success after validation', async () => {
+  setEnv({
+    SUPABASE_URL: '',
+    SUPABASE_SERVICE_ROLE_KEY: '',
+    RESEND_API_KEY: '',
+    PRAXORA_FROM_EMAIL: '',
+    PRAXORA_NOTIFICATION_EMAIL: '',
+    RATE_LIMIT_SALT: ''
+  });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadHandler();
+  const { result, errors } = await captureErrors(() => invoke(handler, { body: validPayload(), ip: '203.0.113.21' }));
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: false, requester_email_sent: false });
+  assert.equal(state.calls.length, 0);
+  assert.equal(errors.some((line) => line.includes('accepted in-process only')), true);
+  assert.equal(errors.some((line) => line.includes('leak-review-test@example.com')), true);
+  assert.equal(reviewInserts(state).length, 0);
+});
+
+test('invalid JSON is 400 when Supabase is unset', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadHandler();
+  const invalid = await invoke(handler, { raw: 'not-json', ip: '203.0.113.22' });
+  assert.equal(invalid.status, 400);
+  assert.equal(invalid.json.success, false);
+  assert.equal(state.calls.length, 0);
+  const method = await invoke(handler, { method: 'GET', raw: '', ip: '203.0.113.23' });
+  assert.equal(method.status, 405);
+});
+
+test('honeypot still skips storage and email when Supabase is unset', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadHandler();
+  const result = await invoke(handler, {
+    body: validPayload({ company_website: 'https://spam.example' }),
+    ip: '203.0.113.24'
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: false, requester_email_sent: false });
+  assert.equal(state.calls.length, 0);
+});
+
+test('without Supabase the in-memory limit still blocks the sixth request', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadHandler();
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.25' });
+    assert.equal(result.status, 200);
+    assert.equal(result.json.success, true);
+  }
+  const blocked = await invoke(handler, { body: validPayload(), ip: '203.0.113.25' });
+  assert.equal(blocked.status, 429);
+  assert.equal(state.calls.some((call) => call.url.includes('supabase.co') || call.url.includes('/rest/v1/')), false);
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 10);
+});
+
+test('a partial Supabase configuration is treated as unset', async () => {
+  setEnv({ SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadHandler();
+  const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.26' });
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(state.calls.some((call) => call.url.includes('supabase.co') || call.url.includes('/rest/v1/')), false);
+  assert.equal(state.calls.some((call) => call.url.includes('api.resend.com')), true);
+});
+
 test('email failure still returns success for a stored review', async () => {
   setEnv({ RESEND_API_KEY: '', PRAXORA_NOTIFICATION_EMAIL: '' });
   const state = { calls: [], patchThrows: true };
@@ -282,4 +401,127 @@ test('email failure still returns success for a stored review', async () => {
   assert.equal(result.status, 200);
   assert.deepEqual(result.json, { success: true, founder_email_sent: false, requester_email_sent: false });
   assert.equal(reviewInserts(state).length, 1);
+});
+
+function validLead(overrides = {}) {
+  return {
+    first_name: 'Ada',
+    email: 'ada@example.com',
+    practice_name: 'Example Dental',
+    company_website: '',
+    daily_calls: 40,
+    missed_call_rate: 'ten_to_twenty',
+    missed_call_followup_rate: 'less_than_half',
+    average_new_patient_value: 500,
+    knows_unscheduled_value: 'no',
+    unscheduled_patient_count: 120,
+    average_treatment_value: 3000,
+    unscheduled_followup_process: 'staff_time',
+    overdue_recall_count: 300,
+    average_recall_value: 180,
+    recall_workflow_status: 'partial',
+    utm_source: 'newsletter',
+    utm_medium: 'email',
+    utm_campaign: 'calc',
+    utm_content: 'result',
+    ...overrides
+  };
+}
+
+function leadInserts(state) {
+  return state.calls.filter((call) => call.method === 'POST' && call.url.includes('/rest/v1/leads'));
+}
+
+test('calculator lead is stored when Supabase is configured', async () => {
+  setEnv();
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const result = await invoke(handler, { body: validLead(), ip: '203.0.113.30' });
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(result.json.email_sent, true);
+  assert.equal(result.json.results.largest_leak, 'unscheduled_treatment');
+  assert.equal(leadInserts(state).length, 1);
+  const stored = JSON.parse(leadInserts(state)[0].body);
+  assert.equal(stored.email, 'ada@example.com');
+  assert.equal(stored.utm_source, 'newsletter');
+  assert.equal(stored.utm_campaign, 'calc');
+});
+
+test('calculator lead succeeds without Supabase and still sends email', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const result = await invoke(handler, { body: validLead(), ip: '203.0.113.31' });
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(result.json.email_sent, true);
+  assert.equal(result.json.results.largest_leak, 'unscheduled_treatment');
+  assert.equal(leadInserts(state).length, 0);
+  assert.equal(state.calls.some((call) => call.url.includes('supabase.co') || call.url.includes('/rest/v1/')), false);
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 1);
+});
+
+test('calculator lead returns success in-process when nothing can deliver it', async () => {
+  setEnv({
+    SUPABASE_URL: '',
+    SUPABASE_SERVICE_ROLE_KEY: '',
+    RESEND_API_KEY: '',
+    PRAXORA_FROM_EMAIL: '',
+    RATE_LIMIT_SALT: ''
+  });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const { result, errors } = await captureErrors(() => invoke(handler, { body: validLead(), ip: '203.0.113.32' }));
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(result.json.email_sent, false);
+  assert.ok(result.json.results);
+  assert.equal(state.calls.length, 0);
+  assert.equal(errors.some((line) => line.includes('accepted in-process only') && line.includes('ada@example.com')), true);
+});
+
+test('calculator invalid JSON is 400 when Supabase is unset', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const invalid = await invoke(handler, { raw: 'not-json', ip: '203.0.113.33' });
+  assert.equal(invalid.status, 400);
+  assert.equal(state.calls.length, 0);
+  const honeypot = await invoke(handler, {
+    body: validLead({ company_website: 'https://spam.example' }),
+    ip: '203.0.113.34'
+  });
+  assert.equal(honeypot.status, 200);
+  assert.deepEqual(honeypot.json, { success: true, email_sent: false, results: null });
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 0);
+});
+
+test('calculator storage failure stays a server error when Supabase is configured', async () => {
+  setEnv();
+  const state = { calls: [], leadInsertStatus: 400 };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const result = await invoke(handler, { body: validLead(), ip: '203.0.113.35' });
+  assert.equal(result.status, 500);
+  assert.equal(result.json.success, false);
+  assert.equal(state.calls.some((call) => call.url.includes('api.resend.com')), false);
+});
+
+test('calculator requests share the in-memory limit when Supabase is unset', async () => {
+  setEnv({ SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', RATE_LIMIT_SALT: '' });
+  const state = { calls: [] };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const result = await invoke(handler, { body: validLead(), ip: '203.0.113.36' });
+    assert.equal(result.status, 200);
+  }
+  const blocked = await invoke(handler, { body: validLead(), ip: '203.0.113.36' });
+  assert.equal(blocked.status, 429);
+  assert.equal(leadInserts(state).length, 0);
 });

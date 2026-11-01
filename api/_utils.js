@@ -77,13 +77,20 @@ function supabaseConfig() {
   };
 }
 
+function supabaseConfigured() {
+  const config = supabaseConfig();
+  return Boolean(config.url && config.key);
+}
+
 function supabaseBaseUrl() {
   const config = supabaseConfig();
   if (!config.url || !config.key) {
     const missing = [];
     if (!config.url) missing.push('SUPABASE_URL');
     if (!config.key) missing.push('SUPABASE_SERVICE_ROLE_KEY');
-    throw new Error(`Supabase environment variables are missing: ${missing.join(', ')}`);
+    const error = new Error(`Supabase environment variables are missing: ${missing.join(', ')}`);
+    error.code = 'supabase_not_configured';
+    throw error;
   }
   return { baseUrl: config.url.replace(/\/$/, ''), key: config.key };
 }
@@ -117,7 +124,7 @@ async function insertSupabase(table, record) {
 }
 
 async function updateSupabase(table, id, patch) {
-  if (!id) return;
+  if (!id || !supabaseConfigured()) return;
   const { baseUrl } = supabaseBaseUrl();
   const response = await fetch(`${baseUrl}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
@@ -149,9 +156,14 @@ async function selectSupabase(table, query) {
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
+// Not a secret. Used only when no RATE_LIMIT_SALT and no Supabase service role
+// key exist, so hashing still runs and the request is not failed closed.
+const IN_PROCESS_RATE_LIMIT_PEPPER = 'praxora-in-process-rate-limit-v1';
 const memoryRateLimits = new Map();
 let warnedMissingSalt = false;
+let warnedMissingPepper = false;
 let warnedMissingRateLimitTable = false;
+let warnedSupabaseUnconfigured = false;
 
 function rateLimitSecret() {
   const salt = readEnv('RATE_LIMIT_SALT');
@@ -159,12 +171,18 @@ function rateLimitSecret() {
   // The service role key is already a server-only secret. Use it so a deploy
   // that never set RATE_LIMIT_SALT still rate-limits instead of failing closed.
   const fallback = readEnv('SUPABASE_SERVICE_ROLE_KEY');
-  if (!fallback) throw new Error('RATE_LIMIT_SALT is missing.');
-  if (!warnedMissingSalt) {
-    warnedMissingSalt = true;
-    console.error('RATE_LIMIT_SALT is not set. Rate-limit hashes are using the Supabase service role key. Set RATE_LIMIT_SALT to a dedicated secret.');
+  if (fallback) {
+    if (!warnedMissingSalt) {
+      warnedMissingSalt = true;
+      console.error('RATE_LIMIT_SALT is not set. Rate-limit hashes are using the Supabase service role key. Set RATE_LIMIT_SALT to a dedicated secret.');
+    }
+    return fallback;
   }
-  return fallback;
+  if (!warnedMissingPepper) {
+    warnedMissingPepper = true;
+    console.error('RATE_LIMIT_SALT is not set and Supabase is not configured. Rate-limit hashes use the built-in pepper. The limit is per instance only.');
+  }
+  return IN_PROCESS_RATE_LIMIT_PEPPER;
 }
 
 function isMissingRelation(error) {
@@ -204,6 +222,18 @@ function rateLimitSince() {
 
 async function enforceRateLimit(req, endpoint) {
   const requestHash = hashRequestIp(getRequestIp(req));
+  if (!supabaseConfigured()) {
+    if (!warnedSupabaseUnconfigured) {
+      warnedSupabaseUnconfigured = true;
+      const { url, key } = supabaseConfig();
+      if (url || key) {
+        console.error('Supabase configuration is incomplete. Set both SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or neither. Using the in-memory per-instance rate limit.');
+      } else {
+        console.error('Supabase is not configured. Using the in-memory per-instance rate limit.');
+      }
+    }
+    return enforceMemoryRateLimit(requestHash, endpoint);
+  }
   const query = new URLSearchParams({
     select: 'id',
     request_hash: `eq.${requestHash}`,
@@ -278,6 +308,7 @@ module.exports = {
   requireMethod,
   getUtmFields,
   readEnv,
+  supabaseConfigured,
   insertSupabase,
   updateSupabase,
   selectSupabase,
