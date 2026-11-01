@@ -8,11 +8,20 @@
   safeInteger,
   requireMethod,
   getUtmFields,
+  readEnv,
   insertSupabase,
   updateSupabase,
   enforceRateLimit,
   sendEmail
 } = require('./_utils');
+
+async function markEmailStatus(id, patch) {
+  try {
+    await updateSupabase('leak_reviews', id, patch);
+  } catch (error) {
+    console.error('Leak review email status update failed', error);
+  }
+}
 
 function founderNotification(review) {
   return `Name: ${review.name}
@@ -99,8 +108,6 @@ module.exports = async function handler(req, res) {
     most_frustrating_workflow: cleanString(payload.most_frustrating_workflow, MAX_LENGTHS.text),
     ...getUtmFields(payload),
     review_status: 'new',
-    founder_email_status: 'pending',
-    requester_email_status: 'pending',
     notes: ''
   };
 
@@ -110,7 +117,7 @@ module.exports = async function handler(req, res) {
     let requesterEmailSent = false;
 
     try {
-      const notificationEmail = process.env.PRAXORA_NOTIFICATION_EMAIL;
+      const notificationEmail = readEnv('PRAXORA_NOTIFICATION_EMAIL');
       if (!notificationEmail) throw new Error('Notification email is missing.');
       await sendEmail({
         to: notificationEmail,
@@ -118,10 +125,10 @@ module.exports = async function handler(req, res) {
         text: founderNotification(review)
       });
       founderEmailSent = true;
-      await updateSupabase('leak_reviews', stored && stored.id, { founder_email_status: 'sent' });
+      await markEmailStatus(stored && stored.id, { founder_email_status: 'sent' });
     } catch (error) {
       console.error('Founder notification failed', error);
-      await updateSupabase('leak_reviews', stored && stored.id, { founder_email_status: 'failed' });
+      await markEmailStatus(stored && stored.id, { founder_email_status: 'failed' });
     }
 
     try {
@@ -131,10 +138,10 @@ module.exports = async function handler(req, res) {
         text: requesterConfirmation(review)
       });
       requesterEmailSent = true;
-      await updateSupabase('leak_reviews', stored && stored.id, { requester_email_status: 'sent' });
+      await markEmailStatus(stored && stored.id, { requester_email_status: 'sent' });
     } catch (error) {
       console.error('Requester confirmation failed', error);
-      await updateSupabase('leak_reviews', stored && stored.id, { requester_email_status: 'failed' });
+      await markEmailStatus(stored && stored.id, { requester_email_status: 'failed' });
     }
 
     return sendJson(res, 200, {

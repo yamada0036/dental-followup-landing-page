@@ -64,16 +64,27 @@ function getUtmFields(payload) {
   };
 }
 
+function readEnv(name) {
+  const value = process.env[name];
+  if (typeof value !== 'string') return '';
+  return value.trim();
+}
+
 function supabaseConfig() {
   return {
-    url: process.env.SUPABASE_URL,
-    key: process.env.SUPABASE_SERVICE_ROLE_KEY
+    url: readEnv('SUPABASE_URL'),
+    key: readEnv('SUPABASE_SERVICE_ROLE_KEY')
   };
 }
 
 function supabaseBaseUrl() {
   const config = supabaseConfig();
-  if (!config.url || !config.key) throw new Error('Supabase environment variables are missing.');
+  if (!config.url || !config.key) {
+    const missing = [];
+    if (!config.url) missing.push('SUPABASE_URL');
+    if (!config.key) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+    throw new Error(`Supabase environment variables are missing: ${missing.join(', ')}`);
+  }
   return { baseUrl: config.url.replace(/\/$/, ''), key: config.key };
 }
 
@@ -97,7 +108,10 @@ async function insertSupabase(table, record) {
   const text = await response.text();
   if (!response.ok) {
     console.error('Supabase insert failed', { table, status: response.status, body: text });
-    throw new Error('Lead storage failed.');
+    const error = new Error('Lead storage failed.');
+    error.status = response.status;
+    error.body = text;
+    throw error;
   }
   try { return JSON.parse(text)[0] || null; } catch { return null; }
 }
@@ -125,9 +139,52 @@ async function selectSupabase(table, query) {
   const text = await response.text();
   if (!response.ok) {
     console.error('Supabase select failed', { table, status: response.status, body: text });
-    throw new Error('Supabase select failed.');
+    const error = new Error('Supabase select failed.');
+    error.status = response.status;
+    error.body = text;
+    throw error;
   }
   return JSON.parse(text || '[]');
+}
+
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const memoryRateLimits = new Map();
+let warnedMissingSalt = false;
+let warnedMissingRateLimitTable = false;
+
+function rateLimitSecret() {
+  const salt = readEnv('RATE_LIMIT_SALT');
+  if (salt) return salt;
+  // The service role key is already a server-only secret. Use it so a deploy
+  // that never set RATE_LIMIT_SALT still rate-limits instead of failing closed.
+  const fallback = readEnv('SUPABASE_SERVICE_ROLE_KEY');
+  if (!fallback) throw new Error('RATE_LIMIT_SALT is missing.');
+  if (!warnedMissingSalt) {
+    warnedMissingSalt = true;
+    console.error('RATE_LIMIT_SALT is not set. Rate-limit hashes are using the Supabase service role key. Set RATE_LIMIT_SALT to a dedicated secret.');
+  }
+  return fallback;
+}
+
+function isMissingRelation(error) {
+  const body = String(error && error.body || '');
+  const status = error && error.status;
+  if (status === 404 && (body.includes('PGRST205') || body.includes('Could not find the table'))) return true;
+  return body.includes('42P01');
+}
+
+function enforceMemoryRateLimit(requestHash, endpoint) {
+  const now = Date.now();
+  const key = `${endpoint}:${requestHash}`;
+  const recent = (memoryRateLimits.get(key) || []).filter((stamp) => now - stamp < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT_MAX) {
+    memoryRateLimits.set(key, recent);
+    return { allowed: false, degraded: true };
+  }
+  recent.push(now);
+  memoryRateLimits.set(key, recent);
+  return { allowed: true, degraded: true };
 }
 
 function getRequestIp(req) {
@@ -137,35 +194,45 @@ function getRequestIp(req) {
 }
 
 function hashRequestIp(ip) {
-  const salt = process.env.RATE_LIMIT_SALT;
-  if (!salt) throw new Error('RATE_LIMIT_SALT is missing.');
-  return crypto.createHash('sha256').update(`${salt}:${ip}`).digest('hex');
+  return crypto.createHash('sha256').update(`${rateLimitSecret()}:${ip}`).digest('hex');
+}
+
+function rateLimitSince() {
+  // Second precision avoids a fractional-second dot in the PostgREST filter value.
+  return new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
 
 async function enforceRateLimit(req, endpoint) {
   const requestHash = hashRequestIp(getRequestIp(req));
-  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
   const query = new URLSearchParams({
     select: 'id',
     request_hash: `eq.${requestHash}`,
     endpoint: `eq.${endpoint}`,
-    created_at: `gte.${tenMinutesAgo}`
+    created_at: `gte.${rateLimitSince()}`
   }).toString();
-  const recent = await selectSupabase('submission_rate_limits', query);
-  if (recent.length >= 5) {
-    return { allowed: false };
+  try {
+    const recent = await selectSupabase('submission_rate_limits', query);
+    if (!Array.isArray(recent)) throw new Error('Supabase select failed.');
+    if (recent.length >= RATE_LIMIT_MAX) return { allowed: false };
+    await insertSupabase('submission_rate_limits', {
+      request_hash: requestHash,
+      endpoint,
+      created_at: new Date().toISOString()
+    });
+    return { allowed: true };
+  } catch (error) {
+    if (!isMissingRelation(error)) throw error;
+    if (!warnedMissingRateLimitTable) {
+      warnedMissingRateLimitTable = true;
+      console.error('submission_rate_limits is unavailable. Apply docs/p0-p1-migration.sql for a shared rate limit. Using a per-instance limit until then.', error.body || error.message);
+    }
+    return enforceMemoryRateLimit(requestHash, endpoint);
   }
-  await insertSupabase('submission_rate_limits', {
-    request_hash: requestHash,
-    endpoint,
-    created_at: new Date().toISOString()
-  });
-  return { allowed: true };
 }
 
 async function sendEmail({ to, subject, text }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.PRAXORA_FROM_EMAIL;
+  const apiKey = readEnv('RESEND_API_KEY');
+  const from = readEnv('PRAXORA_FROM_EMAIL');
   if (!apiKey || !from) throw new Error('Resend environment variables are missing.');
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -210,6 +277,7 @@ module.exports = {
   safeInteger,
   requireMethod,
   getUtmFields,
+  readEnv,
   insertSupabase,
   updateSupabase,
   selectSupabase,
