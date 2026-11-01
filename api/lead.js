@@ -7,6 +7,7 @@
   isValidEmail,
   requireMethod,
   getUtmFields,
+  supabaseConfigured,
   insertSupabase,
   updateSupabase,
   enforceRateLimit,
@@ -139,24 +140,33 @@ module.exports = async function handler(req, res) {
     sequence_status: sequence.enrolled ? 'enrolled' : 'not_enrolled'
   };
 
-  try {
-    const stored = await insertSupabase('leads', lead);
-    let emailSent = false;
+  let stored = null;
+  if (supabaseConfigured()) {
     try {
-      await sendEmail({
-        to: email,
-        subject: 'Your follow-up leakage breakdown',
-        text: buildBreakdownEmail(lead)
-      });
-      emailSent = true;
-      await updateSupabase('leads', stored && stored.id, { email_status: 'sent' });
-    } catch (emailError) {
-      console.error('Calculator email failed', emailError);
-      await updateSupabase('leads', stored && stored.id, { email_status: 'failed' });
+      stored = await insertSupabase('leads', lead);
+    } catch (error) {
+      console.error('Calculator lead failed', error);
+      return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
     }
-    return sendJson(res, 200, { success: true, email_sent: emailSent, results });
-  } catch (error) {
-    console.error('Calculator lead failed', error);
-    return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+  } else {
+    console.error('Supabase is not configured. Calculator lead accepted without storing a leads row.');
   }
+
+  let emailSent = false;
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Your follow-up leakage breakdown',
+      text: buildBreakdownEmail(lead)
+    });
+    emailSent = true;
+    await updateSupabase('leads', stored && stored.id, { email_status: 'sent' });
+  } catch (emailError) {
+    console.error('Calculator email failed', emailError);
+    await updateSupabase('leads', stored && stored.id, { email_status: 'failed' });
+  }
+  if (!supabaseConfigured() && !emailSent) {
+    console.error(`Calculator lead accepted in-process only. No leads row was stored and the breakdown email was not sent. name=${lead.first_name} email=${lead.email} practice=${lead.practice_name}`);
+  }
+  return sendJson(res, 200, { success: true, email_sent: emailSent, results });
 };

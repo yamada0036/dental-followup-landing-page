@@ -9,6 +9,7 @@
   requireMethod,
   getUtmFields,
   readEnv,
+  supabaseConfigured,
   insertSupabase,
   updateSupabase,
   enforceRateLimit,
@@ -111,46 +112,56 @@ module.exports = async function handler(req, res) {
     notes: ''
   };
 
-  try {
-    const stored = await insertSupabase('leak_reviews', review);
-    let founderEmailSent = false;
-    let requesterEmailSent = false;
-
+  let stored = null;
+  if (supabaseConfigured()) {
     try {
-      const notificationEmail = readEnv('PRAXORA_NOTIFICATION_EMAIL');
-      if (!notificationEmail) throw new Error('Notification email is missing.');
-      await sendEmail({
-        to: notificationEmail,
-        subject: 'New Praxora Follow-Up Leak Review Request',
-        text: founderNotification(review)
-      });
-      founderEmailSent = true;
-      await markEmailStatus(stored && stored.id, { founder_email_status: 'sent' });
+      stored = await insertSupabase('leak_reviews', review);
     } catch (error) {
-      console.error('Founder notification failed', error);
-      await markEmailStatus(stored && stored.id, { founder_email_status: 'failed' });
+      console.error('Leak review failed', error);
+      return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
     }
-
-    try {
-      await sendEmail({
-        to: email,
-        subject: 'Your Praxora follow-up leak review request',
-        text: requesterConfirmation(review)
-      });
-      requesterEmailSent = true;
-      await markEmailStatus(stored && stored.id, { requester_email_status: 'sent' });
-    } catch (error) {
-      console.error('Requester confirmation failed', error);
-      await markEmailStatus(stored && stored.id, { requester_email_status: 'failed' });
-    }
-
-    return sendJson(res, 200, {
-      success: true,
-      founder_email_sent: founderEmailSent,
-      requester_email_sent: requesterEmailSent
-    });
-  } catch (error) {
-    console.error('Leak review failed', error);
-    return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+  } else {
+    console.error('Supabase is not configured. Leak review accepted without storing a leak_reviews row.');
   }
+
+  let founderEmailSent = false;
+  let requesterEmailSent = false;
+
+  try {
+    const notificationEmail = readEnv('PRAXORA_NOTIFICATION_EMAIL');
+    if (!notificationEmail) throw new Error('Notification email is missing.');
+    await sendEmail({
+      to: notificationEmail,
+      subject: 'New Praxora Follow-Up Leak Review Request',
+      text: founderNotification(review)
+    });
+    founderEmailSent = true;
+    await markEmailStatus(stored && stored.id, { founder_email_status: 'sent' });
+  } catch (error) {
+    console.error('Founder notification failed', error);
+    await markEmailStatus(stored && stored.id, { founder_email_status: 'failed' });
+  }
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Your Praxora follow-up leak review request',
+      text: requesterConfirmation(review)
+    });
+    requesterEmailSent = true;
+    await markEmailStatus(stored && stored.id, { requester_email_status: 'sent' });
+  } catch (error) {
+    console.error('Requester confirmation failed', error);
+    await markEmailStatus(stored && stored.id, { requester_email_status: 'failed' });
+  }
+
+  if (!supabaseConfigured() && !founderEmailSent && !requesterEmailSent) {
+    console.error(`Leak review accepted in-process only. No leak_reviews row was stored and neither the founder nor requester email was sent. name=${review.name} email=${review.email} practice=${review.practice_name}`);
+  }
+
+  return sendJson(res, 200, {
+    success: true,
+    founder_email_sent: founderEmailSent,
+    requester_email_sent: requesterEmailSent
+  });
 };
