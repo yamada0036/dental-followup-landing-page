@@ -63,5 +63,10 @@ Use the Open Dental unscheduled treatment report guide below. It links to Open D
 - [Follow-Up by Patient Intent](https://www.getpraxora.com/resources/dental-treatment-follow-up-by-patient-intent/)
 - [Pricing Evaluation Guide](https://www.getpraxora.com/resources/dental-follow-up-software-pricing/)
 - [Open Dental Integration Considerations](https://www.getpraxora.com/resources/open-dental-follow-up-integration/)
+- [MaxAssist vs Dental Intelligence for Appointment Recall](https://www.getpraxora.com/resources/maxassist-vs-dental-intelligence-appointment-recall/): Head-to-head on hygiene and appointment recall, then Praxora as a follow-up recovery option
+- [RevenueWell Alternatives for Dental Follow-Up](https://www.getpraxora.com/resources/revenuewell-alternatives-dental-follow-up/)
+- [Solutionreach Alternatives for Dental Follow-Up](https://www.getpraxora.com/resources/solutionreach-alternatives-dental-follow-up/)
+- [Lighthouse 360 vs Follow-Up Recovery](https://www.getpraxora.com/resources/lighthouse-360-vs-follow-up-recovery/)
+- [Demandforce Alternatives for Dental Follow-Up](https://www.getpraxora.com/resources/demandforce-alternatives-dental-follow-up/)
 - [All Resources](https://www.getpraxora.com/resources/)
 - [Privacy](https://www.getpraxora.com/privacy/)
