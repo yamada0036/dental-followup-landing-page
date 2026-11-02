@@ -57,20 +57,20 @@ P0 conversion endpoints live in `api/` as Vercel Serverless Functions:
 - `POST /api/leak-review` accepts Free Follow-Up Leak Review requests and sends notification/confirmation emails.
 - `GET /api/config` exposes non-secret frontend config such as the GA measurement ID.
 
-Supabase storage is optional. Email delivery uses Resend through server-side environment variables. With no `SUPABASE_URL` and no `SUPABASE_SERVICE_ROLE_KEY`, both routes still accept a validated submission, skip the database write, and attempt email when Resend is configured.
+Supabase storage is optional. Email delivery uses Resend through server-side environment variables. With no Supabase variables, or when those variables are set but a Supabase call fails, both routes still accept a validated submission, skip the database write, and attempt email when Resend is configured.
 
 ## Environment Variables
 
 Trimmed values are used; do not wrap them in quotes. None of the Supabase variables are required for the forms to return success.
 
-Optional storage. Set both, or neither. A partial pair is treated as unset. When unset, no row is written and the response does not pretend one was stored.
+Optional storage. Set both, or neither. A partial pair is treated as unset. When unset, or when a configured project cannot be reached, rejects the key, is missing the table, or has a bad URL, no row is written and the response does not pretend one was stored.
 
 ```text
 SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
 ```
 
-`SUPABASE_URL` is the project URL (`https://<project>.supabase.co`), not the REST path. `SUPABASE_SERVICE_ROLE_KEY` must be the service role key. The anon key cannot insert past row level security, and that failure is returned as HTTP 500 when storage is configured.
+`SUPABASE_URL` is the project URL (`https://<project>.supabase.co`), not the REST path. `SUPABASE_SERVICE_ROLE_KEY` must be the service role key. The anon key cannot insert past row level security. That failure is logged, the row is skipped, and a validated submission still returns success, the same as when storage is unset.
 
 Email delivery uses Resend. These are the variables still required for founder and requester mail. A validated submission still returns success when email fails; the UI then says the confirmation email was not sent.
 
@@ -91,9 +91,11 @@ RATE_LIMIT_SALT
 
 `RATE_LIMIT_SALT` should be a long random string. It salts hashed client addresses for the 5-request / 10-minute limit. If it is unset and the service role key is present, that key is used as the salt. If Supabase is not configured and the salt is also unset, hashes use a built-in pepper so a missing secret does not reject the form. That pepper is not a deploy secret. Without Supabase, the limit is kept in memory on that instance only.
 
-`POST /api/leak-review` and `POST /api/lead` return success after validation even when Supabase is unset and email cannot be sent. That case is logged as accepted in-process only. The audit form fires GA4 `generate_lead` when the response is HTTP 200 and `success` is true.
+`POST /api/leak-review` and `POST /api/lead` return success after validation even when Supabase is unset, Supabase calls fail, and email cannot be sent. That case is logged as accepted in-process only. The audit form fires GA4 `generate_lead` when the response is HTTP 200 and `success` is true.
 
-### Verify a deploy with no Supabase variables
+### Verify a deploy with no working Supabase
+
+The same checks apply when `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are still set but Supabase is not usable. Invalid JSON is 400. A valid review is 200 with `"success": true`.
 
 ```bash
 # Invalid JSON must be 400, not 500.
@@ -109,7 +111,7 @@ curl -i -X POST 'https://www.getpraxora.com/api/leak-review' \
 
 ## Database Setup
 
-Run `docs/supabase-schema.sql` for a fresh setup, or `docs/p0-p1-migration.sql` to update an existing Supabase project, before expecting rows to be stored. The review insert does not send `founder_email_status` or `requester_email_status`; those columns keep their defaults and are updated after email delivery. An older `leak_reviews` table that does not have them can still store the request. `submission_rate_limits` is required for a rate limit shared across serverless instances. If Supabase is unset, or that table is missing, the function keeps the same 5-request / 10-minute limit in memory on that instance. A missing table is logged with a reminder to apply the migration. The honeypot field is unchanged.
+Run `docs/supabase-schema.sql` for a fresh setup, or `docs/p0-p1-migration.sql` to update an existing Supabase project, before expecting rows to be stored. The review insert does not send `founder_email_status` or `requester_email_status`; those columns keep their defaults and are updated after email delivery. An older `leak_reviews` table that does not have them can still store the request. `submission_rate_limits` is required for a rate limit shared across serverless instances. If Supabase is unset, a Supabase call fails, or that table is missing, the function keeps the same 5-request / 10-minute limit in memory on that instance. A missing table is logged with a reminder to apply the migration. The honeypot field is unchanged.
 
 Tables:
 
@@ -168,8 +170,8 @@ historical events.
 
 Run analytics regression checks with `node --test scripts/analytics.test.cjs scripts/conversion-events.test.cjs scripts/leak-review.test.cjs`.
 After deploying, verify one real successful submission in GA4 DebugView.
-Confirm email delivery from Resend, and confirm a stored row only when
-Supabase is configured. Local tests use mocked services and do not establish
+Confirm email delivery from Resend, and confirm a stored row only when the
+Supabase write succeeds. Local tests use mocked services and do not establish
 production database or email health.
 
 ## Important Files

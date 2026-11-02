@@ -125,15 +125,19 @@ async function insertSupabase(table, record) {
 
 async function updateSupabase(table, id, patch) {
   if (!id || !supabaseConfigured()) return;
-  const { baseUrl } = supabaseBaseUrl();
-  const response = await fetch(`${baseUrl}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
-    method: 'PATCH',
-    headers: supabaseHeaders(),
-    body: JSON.stringify(patch)
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    console.error('Supabase update failed', { table, status: response.status, body: text });
+  try {
+    const { baseUrl } = supabaseBaseUrl();
+    const response = await fetch(`${baseUrl}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: supabaseHeaders(),
+      body: JSON.stringify(patch)
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('Supabase update failed', { table, status: response.status, body: text });
+    }
+  } catch (error) {
+    console.error('Supabase update failed', error);
   }
 }
 
@@ -164,6 +168,7 @@ let warnedMissingSalt = false;
 let warnedMissingPepper = false;
 let warnedMissingRateLimitTable = false;
 let warnedSupabaseUnconfigured = false;
+let warnedSupabaseRateLimit = false;
 
 function rateLimitSecret() {
   const salt = readEnv('RATE_LIMIT_SALT');
@@ -251,10 +256,16 @@ async function enforceRateLimit(req, endpoint) {
     });
     return { allowed: true };
   } catch (error) {
-    if (!isMissingRelation(error)) throw error;
-    if (!warnedMissingRateLimitTable) {
-      warnedMissingRateLimitTable = true;
-      console.error('submission_rate_limits is unavailable. Apply docs/p0-p1-migration.sql for a shared rate limit. Using a per-instance limit until then.', error.body || error.message);
+    // A configured project that cannot be reached, rejects the key, or is missing
+    // the table is treated like unset Supabase: per-instance limit, request continues.
+    if (isMissingRelation(error)) {
+      if (!warnedMissingRateLimitTable) {
+        warnedMissingRateLimitTable = true;
+        console.error('submission_rate_limits is unavailable. Apply docs/p0-p1-migration.sql for a shared rate limit. Using a per-instance limit until then.', error.body || error.message);
+      }
+    } else if (!warnedSupabaseRateLimit) {
+      warnedSupabaseRateLimit = true;
+      console.error('Supabase rate limit failed. Using the in-memory per-instance rate limit.', (error && (error.body || error.message)) || error);
     }
     return enforceMemoryRateLimit(requestHash, endpoint);
   }

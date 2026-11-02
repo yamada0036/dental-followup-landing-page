@@ -141,12 +141,13 @@ module.exports = async function handler(req, res) {
   };
 
   let stored = null;
+  let storedLead = false;
   if (supabaseConfigured()) {
     try {
       stored = await insertSupabase('leads', lead);
+      storedLead = true;
     } catch (error) {
-      console.error('Calculator lead failed', error);
-      return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+      console.error('Calculator lead storage failed. Accepted without storing a leads row.', error);
     }
   } else {
     console.error('Supabase is not configured. Calculator lead accepted without storing a leads row.');
@@ -165,7 +166,7 @@ module.exports = async function handler(req, res) {
     console.error('Calculator email failed', emailError);
     await updateSupabase('leads', stored && stored.id, { email_status: 'failed' });
   }
-  if (!supabaseConfigured() && !emailSent) {
+  if (!storedLead && !emailSent) {
     console.error(`Calculator lead accepted in-process only. No leads row was stored and the breakdown email was not sent. name=${lead.first_name} email=${lead.email} practice=${lead.practice_name}`);
   }
   return sendJson(res, 200, { success: true, email_sent: emailSent, results });
