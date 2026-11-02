@@ -84,6 +84,9 @@ function installFetch(state) {
   global.fetch = async (url, options = {}) => {
     const target = String(url);
     state.calls.push({ url: target, method: options.method, body: options.body, headers: options.headers });
+    if (state.supabaseThrows && !target.includes('api.resend.com')) {
+      throw new Error('getaddrinfo ENOTFOUND');
+    }
     if (target.includes('submission_rate_limits') && options.method === 'GET') {
       if (state.rateLimitMode === 'missing') {
         return jsonResponse(404, {
@@ -256,14 +259,15 @@ test('missing Supabase configuration still accepts a review and sends email', as
   assert.match(founderText, /Example Dental/);
 });
 
-test('unauthorized Supabase rate-limit reads still fail closed', async () => {
+test('unauthorized Supabase rate-limit reads fall back to the in-memory limit', async () => {
   setEnv();
   const state = { calls: [], rateLimitMode: 'unauthorized' };
   installFetch(state);
   const handler = loadHandler();
   const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.16' });
-  assert.equal(result.status, 500);
-  assert.equal(reviewInserts(state).length, 0);
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: true, requester_email_sent: true });
+  assert.equal(reviewInserts(state).length, 1);
 });
 
 test('a missing rate-limit table keeps the same limit and still stores reviews', async () => {
@@ -292,14 +296,82 @@ test('rate-limit insert reporting a missing table still stores the review', asyn
   assert.equal(reviewInserts(state).length, 1);
 });
 
-test('storage failure stays a server error', async () => {
+test('storage failure still accepts the review and sends email', async () => {
   setEnv();
   const state = { calls: [], reviewInsertStatus: 400 };
   installFetch(state);
   const handler = loadHandler();
   const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.19' });
-  assert.equal(result.status, 500);
-  assert.equal(result.json.success, false);
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: true, requester_email_sent: true });
+  assert.equal(reviewInserts(state).length, 1);
+});
+
+test('a configured Supabase that cannot be reached still accepts a valid review', async () => {
+  setEnv();
+  const state = { calls: [], supabaseThrows: true };
+  installFetch(state);
+  const handler = loadHandler();
+  const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.40' });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: true, requester_email_sent: true });
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 2);
+  assert.equal(reviewInserts(state).length, 1);
+});
+
+test('invalid JSON stays 400 when a configured Supabase cannot be reached', async () => {
+  setEnv();
+  const state = { calls: [], supabaseThrows: true };
+  installFetch(state);
+  const handler = loadHandler();
+  const invalid = await invoke(handler, { raw: 'not-json', ip: '203.0.113.41' });
+  assert.equal(invalid.status, 400);
+  assert.equal(invalid.json.success, false);
+  assert.equal(reviewInserts(state).length, 0);
+  const incomplete = await invoke(handler, { body: { company_website: '', email: 'person@example.com' }, ip: '203.0.113.42' });
+  assert.equal(incomplete.status, 400);
+  assert.equal(incomplete.json.success, false);
+});
+
+test('auth failures from a configured Supabase still accept a valid review and send email', async () => {
+  setEnv();
+  const state = { calls: [], rateLimitMode: 'unauthorized', reviewInsertStatus: 401 };
+  installFetch(state);
+  const handler = loadHandler();
+  const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.43' });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: true, requester_email_sent: true });
+  assert.equal(reviewInserts(state).length, 1);
+});
+
+test('failing Supabase still enforces the in-memory limit', async () => {
+  setEnv();
+  const state = { calls: [], supabaseThrows: true };
+  installFetch(state);
+  const handler = loadHandler();
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const result = await invoke(handler, { body: validPayload(), ip: '203.0.113.45' });
+    assert.equal(result.status, 200);
+    assert.equal(result.json.success, true);
+  }
+  const blocked = await invoke(handler, { body: validPayload(), ip: '203.0.113.45' });
+  assert.equal(blocked.status, 429);
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 10);
+});
+
+test('failing Supabase and unset email still return success after validation', async () => {
+  setEnv({
+    RESEND_API_KEY: '',
+    PRAXORA_FROM_EMAIL: '',
+    PRAXORA_NOTIFICATION_EMAIL: ''
+  });
+  const state = { calls: [], rateLimitMode: 'unauthorized', reviewInsertStatus: 401 };
+  installFetch(state);
+  const handler = loadHandler();
+  const { result, errors } = await captureErrors(() => invoke(handler, { body: validPayload(), ip: '203.0.113.46' }));
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.json, { success: true, founder_email_sent: false, requester_email_sent: false });
+  assert.equal(errors.some((line) => line.includes('accepted in-process only') && line.includes('leak-review-test@example.com')), true);
 });
 
 function captureErrors(fn) {
@@ -501,15 +573,33 @@ test('calculator invalid JSON is 400 when Supabase is unset', async () => {
   assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 0);
 });
 
-test('calculator storage failure stays a server error when Supabase is configured', async () => {
+test('calculator storage failure still accepts the lead and sends email', async () => {
   setEnv();
   const state = { calls: [], leadInsertStatus: 400 };
   installFetch(state);
   const handler = loadLeadHandler();
   const result = await invoke(handler, { body: validLead(), ip: '203.0.113.35' });
-  assert.equal(result.status, 500);
-  assert.equal(result.json.success, false);
-  assert.equal(state.calls.some((call) => call.url.includes('api.resend.com')), false);
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(result.json.email_sent, true);
+  assert.equal(result.json.results.largest_leak, 'unscheduled_treatment');
+  assert.equal(leadInserts(state).length, 1);
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 1);
+});
+
+test('calculator lead succeeds when a configured Supabase cannot be reached', async () => {
+  setEnv();
+  const state = { calls: [], supabaseThrows: true };
+  installFetch(state);
+  const handler = loadLeadHandler();
+  const result = await invoke(handler, { body: validLead(), ip: '203.0.113.47' });
+  assert.equal(result.status, 200);
+  assert.equal(result.json.success, true);
+  assert.equal(result.json.email_sent, true);
+  assert.equal(state.calls.filter((call) => call.url.includes('api.resend.com')).length, 1);
+  const invalid = await invoke(handler, { raw: 'not-json', ip: '203.0.113.48' });
+  assert.equal(invalid.status, 400);
+  assert.equal(invalid.json.success, false);
 });
 
 test('calculator requests share the in-memory limit when Supabase is unset', async () => {

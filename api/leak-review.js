@@ -113,12 +113,13 @@ module.exports = async function handler(req, res) {
   };
 
   let stored = null;
+  let storedReview = false;
   if (supabaseConfigured()) {
     try {
       stored = await insertSupabase('leak_reviews', review);
+      storedReview = true;
     } catch (error) {
-      console.error('Leak review failed', error);
-      return sendJson(res, 500, { success: false, error: 'Unable to process your request.' });
+      console.error('Leak review storage failed. Accepted without storing a leak_reviews row.', error);
     }
   } else {
     console.error('Supabase is not configured. Leak review accepted without storing a leak_reviews row.');
@@ -155,7 +156,7 @@ module.exports = async function handler(req, res) {
     await markEmailStatus(stored && stored.id, { requester_email_status: 'failed' });
   }
 
-  if (!supabaseConfigured() && !founderEmailSent && !requesterEmailSent) {
+  if (!storedReview && !founderEmailSent && !requesterEmailSent) {
     console.error(`Leak review accepted in-process only. No leak_reviews row was stored and neither the founder nor requester email was sent. name=${review.name} email=${review.email} practice=${review.practice_name}`);
   }
 
