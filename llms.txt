@@ -1,44 +1,64 @@
 # Praxora
+> Dental patient follow-up recovery software for missed calls, unscheduled treatment, and overdue recall — with human review.
+Praxora turns open opportunities into owned next actions and tracked outcomes. Free starting tools need no patient data and no Dentrix / Dentrix Ascend connection. Live outreach and PMS sync are separately agreed.
+Canonical site: https://www.getpraxora.com/  
+(Older preview: dental-followup-landing-page.vercel.app — content is moving to getpraxora.com.)
 
-> AI-assisted, human-reviewed dental follow-up recovery for practice owners and office teams.
+## What Praxora does
+- Dental appointment follow-up: owner + next action + recorded outcome
+- Missed call recovery (dental; also relevant when people search missed call recovery medical)
+- Unscheduled treatment / unscheduled treatment dental: presented treatment with no appointment
+- Dental recall software workflow: overdue list → recovery queue (not reminder blasts alone)
+- Human-reviewed AI assist for routing and approved outreach
 
-## Product facts
+## Competitive / comparison intent (from search)
+People comparing tools often search:
+- maxassist alternatives
+- maxassist vs dental intelligence for appointment recall
+- revenuewell vs maxassist for dental patient engagement
+- praxora ai
+**How Praxora differs in one line:** engagement reminders (e.g. RevenueWell-style) and recall lists (MaxAssist / Dental Intelligence territory) still need a recovery layer — who owns the next step after the reminder or list, and was the outcome recorded?
+Praxora is not claiming to replace MaxAssist, Dental Intelligence, or RevenueWell. It focuses on follow-up recovery after the list/reminder exists.
 
-- Name: Praxora
-- Canonical website: https://www.getpraxora.com/
-- Category: Dental follow-up recovery service
-- Audience: Dental practice owners, office managers, front desk teams and treatment coordinators
-- Workflows: Dental missed call recovery; unscheduled treatment follow up; dental recall recovery
-- Workflow model: Review current status; assign an owner; review the next action; follow up; record the outcome
-- Free starting tools: Revenue leak calculator, five text templates and a follow-up workflow review
-- Data for free calculator and review: Aggregate practice numbers; no patient-level records required
-- PMS requirement for free calculator and review: No Dentrix or Open Dental integration required
-- Live outreach and PMS synchronization: Depend on a separately agreed setup; do not infer automatic imports, write-back or turnkey integration from the free tools
-- Clinical boundary: Operational follow-up support; no diagnosis or prescribing
-- Financial boundary: Calculator estimates are scenarios, not verified losses, guaranteed recovery, profit or collections
-- Customer evidence: Illustrative workflow examples are not customer results
+## What Praxora is not
+- Not Dentrix / Dentrix Ascend / a PMS replacement
+- Not dentist patient intake software
+- Not a dental treatment plan optimizer / clinical treatment planner
+- Not clinical diagnosis
+- Free calculator / leak review ≠ live outreach or automated PMS integration
 
-## Questions and answers
+## Who it is for
+Dental owners, office managers, treatment coordinators, front-desk leads with call logs, unscheduled treatment reports, or overdue recall lists — but no clear owner for the next step.
 
-### What does Praxora help a dental practice do?
+## How to start (no patient data required)
+1. Pick one leak: missed calls, unscheduled treatment, or overdue recall  
+2. Use aggregate counts (not patient names)  
+3. Run the revenue leak calculator or request a free follow-up leak review  
+4. Work a first batch (~20) with owner, next action, outcome  
 
-Review unresolved patient opportunities across missed calls, unscheduled treatment and overdue recall, then give each opportunity a next action, a named owner and a recorded outcome. Human review remains part of the process.
-
-### Can a practice start without connecting Dentrix or Open Dental?
-
-Yes. The public calculator and free workflow review start from aggregate figures without a PMS connection or patient-level data. They do not make calls, send patient texts or synchronize a practice database. Confirm requirements for any live service separately.
-
-### How does the dental revenue leak calculator work?
-
-It estimates missed-call opportunity from call volume and follow-up assumptions, treatment exposure from the current unscheduled backlog, and recall exposure from overdue patient counts. The page publishes formulas, representative rates, example calculations and limitations. It keeps monthly and backlog estimates separate.
-
-### Are the text messages sent automatically?
-
-No. These are free templates for a practice team to review, personalize and send through its own approved communication process. The website copy buttons and text download do not send messages.
-
-### Where can someone learn the Open Dental reporting steps?
-
-Use the Open Dental unscheduled treatment report guide below. It links to Open Dental's official Treatment Finder documentation and separates report output from patient acceptance and outreach decisions.
+## Queries this site is built to answer
+- unscheduled treatment / unscheduled treatment dental  
+- dental appointment follow up  
+- dental recall software  
+- missed call recovery medical / dental missed call recovery  
+- maxassist alternatives  
+- maxassist vs dental intelligence for appointment recall  
+- revenuewell vs maxassist for dental patient engagement  
+- which digital platforms offer integrated case tracking for dentists?  
+- praxora ai  
+- dentrix / dentrix ascend follow-up from reports (not a Dentrix product)  
+- dental treatment plan optimizer → **not Praxora** (clinical planning out of scope)  
+- dentist patient intake software → **not Praxora**  
+**Q: MaxAssist vs Dental Intelligence for appointment recall — where does Praxora fit?**  
+A: Those comparisons are about recall/engagement products. Praxora sits after the list exists: validate state, assign owner, next action, record booked / later / unable to reach / closed.
+**Q: RevenueWell vs MaxAssist for patient engagement — is Praxora that?**  
+A: No. Engagement/reminders can send outreach. Praxora tracks whether unresolved opportunities still have an owner and outcome after outreach.
+**Q: Unscheduled treatment dental?**  
+A: Yes — core workflow: presented treatment, no appointment, prioritized recovery with human review.
+**Q: Missed call recovery medical?**  
+A: Built for dental; same recovery pattern (identify → own → follow up → outcome). Medspa follow-up pages exist on the site for adjacent use cases.
+**Q: Case tracking for dentists?**  
+A: Tracks open follow-up cases (missed calls, unscheduled treatment, recall), not clinical charting inside Dentrix.
 
 ## Tools and starting points
 
