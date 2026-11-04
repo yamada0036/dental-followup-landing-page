@@ -30,7 +30,8 @@
       "@id": "https://www.getpraxora.com/#organization",
       "name": "Praxora",
       "url": "https://www.getpraxora.com/",
-      "logo": "https://www.getpraxora.com/assets/praxora-logo.png"
+      "logo": "https://www.getpraxora.com/assets/praxora-logo.png",
+      "description": "Praxora operates dental follow-up software at www.getpraxora.com. The product is software with human review before outreach."
     },
     {
       "@type": "WebSite",
@@ -53,10 +54,10 @@
         "@id": "https://www.getpraxora.com/#website"
       },
       "about": {
-        "@id": "https://www.getpraxora.com/#follow-up-recovery"
+        "@id": "https://www.getpraxora.com/#software"
       },
       "mainEntity": {
-        "@id": "https://www.getpraxora.com/#follow-up-recovery"
+        "@id": "https://www.getpraxora.com/#software"
       }
     },
     {
@@ -98,40 +99,25 @@
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://www.getpraxora.com/#follow-up-recovery",
-      "name": "Praxora Dental Follow-Up Recovery",
-      "url": "https://www.getpraxora.com/",
-      "serviceType": "AI-assisted, human-reviewed dental follow-up recovery",
-      "description": "A dental follow-up recovery service focused on missed calls, unscheduled treatment and overdue recall, with owned next actions and recorded outcomes. The free calculator and workflow review use aggregate practice numbers and require no PMS integration.",
-      "provider": {
+      "@type": "SoftwareApplication",
+      "@id": "https://www.getpraxora.com/#software",
+      "name": "Praxora",
+      "url": "https://www.getpraxora.com",
+      "applicationCategory": "BusinessApplication",
+      "description": "Dental follow-up software for missed calls, unscheduled treatment, and overdue recall. Human-reviewed AI assist for routing and approved outreach. Each open case has an owner, a next action, and a recorded outcome. The free calculator and workflow review use aggregate practice numbers and require no PMS integration.",
+      "publisher": {
         "@id": "https://www.getpraxora.com/#organization"
       },
       "audience": {
         "@type": "BusinessAudience",
         "audienceType": "Dental practice owners, office managers and treatment coordinators"
       },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Dental follow-up workflows",
-        "itemListElement": [
-          {
-            "@type": "Service",
-            "name": "Dental missed call recovery",
-            "url": "https://www.getpraxora.com/missed-calls.html"
-          },
-          {
-            "@type": "Service",
-            "name": "Unscheduled treatment follow up",
-            "url": "https://www.getpraxora.com/workflow-unscheduled-treatment.html"
-          },
-          {
-            "@type": "Service",
-            "name": "Dental recall recovery",
-            "url": "https://www.getpraxora.com/workflow-recall-leakage.html"
-          }
-        ]
-      }
+      "featureList": [
+        "Missed call recovery",
+        "Unscheduled treatment follow-up",
+        "Overdue recall recovery",
+        "Human review before outreach"
+      ]
     }
   ]
 }
@@ -146,6 +132,7 @@
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">Menu</button>
     <nav class="nav-links" id="mainNav" aria-label="Main navigation">
       <a href="#recovery-framework">How It Works</a>
+      <a href="#what-is-praxora">What is Praxora?</a>
       <a href="/dental-revenue-leak-calculator/">Calculator</a>
       <a href="/resources/">Resources</a>
       <a href="/free-missed-revenue-audit.html">Free Leak Review</a>
@@ -241,8 +228,24 @@
       </div>
     </section>
 
-    <section class="section seo-faq" aria-labelledby="praxora-service">
-      <div class="section-head"><span class="section-kicker">About Praxora</span><h2 id="praxora-service">Dental follow-up recovery with human review.</h2><p>Praxora is an AI-assisted, human-reviewed dental follow-up recovery service focused on dental missed call recovery, unscheduled treatment follow up and dental recall recovery. The workflow gives each open opportunity an owner, a next action and a recorded outcome.</p><p>Start with the free calculator, templates or a workflow review using aggregate practice numbers. These starting tools require no <a href="/resources/dentrix-follow-up-integration/">Dentrix</a> or <a href="/resources/open-dental-follow-up-integration/">Open Dental</a> integration. <a href="/resources/start-dental-follow-up-without-pms-integration/">You can start follow-up recovery without a PMS connection</a>. Live patient outreach and PMS synchronization depend on a separately agreed setup; automated integration is not included in the free review.</p></div>
+    <section class="section content-section" id="what-is-praxora" aria-labelledby="what-is-praxora-heading">
+      <div class="section-head">
+        <span class="section-kicker">What is Praxora?</span>
+        <h2 id="what-is-praxora-heading">Software for dental follow-up, with human review.</h2>
+      </div>
+      <div class="content-wrap">
+        <div class="content-block">
+          <h3>What Praxora is</h3>
+          <p>Praxora is software for dental practices to recover missed calls and follow up with patients. The workflows on this site are missed calls, unscheduled treatment, and overdue recall. Each open case is meant to have an owner, a next action, and a recorded outcome.</p>
+          <h3>What the software does</h3>
+          <p>The product is AI-assisted. This site describes it as a human-reviewed AI assist for routing and approved outreach. The published steps are find, classify, prioritize, human review, follow up, and recover. Practice staff review the next step before outreach.</p>
+          <h3>Software, with human review</h3>
+          <p>Praxora is software with human review before a message is sent. It is not an agency, a managed service, or a done-for-you follow-up operation. It does not diagnose, prescribe, or replace clinical judgment.</p>
+          <h3>Who operates it</h3>
+          <p>Praxora operates this software. The site is <a href="https://www.getpraxora.com/">www.getpraxora.com</a>. The same statement is on <a href="/about/">What is Praxora?</a>.</p>
+          <p>Start with the free calculator, templates, or a workflow review using aggregate practice numbers. These starting tools require no <a href="/resources/dentrix-follow-up-integration/">Dentrix</a> or <a href="/resources/open-dental-follow-up-integration/">Open Dental</a> integration. <a href="/resources/start-dental-follow-up-without-pms-integration/">You can start follow-up recovery without a PMS connection</a>. Live patient outreach and PMS synchronization depend on a separately agreed setup; automated integration is not included in the free review.</p>
+        </div>
+      </div>
     </section>
 
     <section class="section compliance">
@@ -256,8 +259,8 @@
 
   <footer class="footer">
     <a class="brand small" href="/"><img src="assets/praxora-logo.png" alt="Praxora logo" /><span>Praxora <span>.ai</span></span></a>
-    <div class="footer-links"><a href="/dental-revenue-leak-calculator/">Calculator</a><a href="/resources/follow-up-leakage-dental-practice/">Follow-Up Leakage</a><a href="/free-missed-revenue-audit.html">Free Leak Review</a><a href="/privacy/">Privacy</a></div>
-    <p>Dental follow-up recovery for missed calls, unscheduled treatment and overdue recall.</p>
+    <div class="footer-links"><a href="/about/">What is Praxora?</a><a href="/dental-revenue-leak-calculator/">Calculator</a><a href="/resources/follow-up-leakage-dental-practice/">Follow-Up Leakage</a><a href="/free-missed-revenue-audit.html">Free Leak Review</a><a href="/privacy/">Privacy</a></div>
+    <p>Praxora software for dental follow-up, with human review. Operated by Praxora.</p>
   </footer>
 
   <script src="script.js"></script>
