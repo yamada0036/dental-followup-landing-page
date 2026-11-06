@@ -1,5 +1,6 @@
 # Praxora
 > Dental patient follow-up recovery software for missed calls, unscheduled treatment, and overdue recall — with human review.
+Praxora is software with human review. It is not an agency, a managed service, or a done-for-you operation. Praxora operates it at https://www.getpraxora.com/.
 Praxora turns open opportunities into owned next actions and tracked outcomes. Free starting tools need no patient data and no Dentrix / Dentrix Ascend connection. Live outreach and PMS sync are separately agreed.
 Canonical site: https://www.getpraxora.com/  
 (Older preview: dental-followup-landing-page.vercel.app — content is moving to getpraxora.com.)
@@ -21,6 +22,7 @@ People comparing tools often search:
 Praxora is not claiming to replace MaxAssist, Dental Intelligence, or RevenueWell. It focuses on follow-up recovery after the list/reminder exists.
 
 ## What Praxora is not
+- Not an agency, a managed service, or a done-for-you follow-up operation
 - Not Dentrix / Dentrix Ascend / a PMS replacement
 - Not dentist patient intake software
 - Not a dental treatment plan optimizer / clinical treatment planner
@@ -63,6 +65,7 @@ A: Tracks open follow-up cases (missed calls, unscheduled treatment, recall), no
 ## Tools and starting points
 
 - [Home](https://www.getpraxora.com/): Product and workflow overview
+- [What is Praxora?](https://www.getpraxora.com/about/): Software, what the AI assist covers, human review, and who operates it
 - [Dental Practice Revenue Leak Calculator](https://www.getpraxora.com/dental-revenue-leak-calculator/): Free interactive estimate, formulas and financial assumptions
 - [Free Follow-Up Workflow Review](https://www.getpraxora.com/free-missed-revenue-audit.html): Request a review using aggregate practice figures
 - [Unscheduled Dental Treatment Text Samples](https://www.getpraxora.com/resources/unscheduled-dental-treatment-text-samples/): Five copyable messages and a plain-text download

@@ -27,6 +27,7 @@ readme_index:
   enabled: false
   remove_originals: false
 exclude:
+  - about/index.html
   - dental-revenue-leak-calculator/index.html
   - follow-up-recovery-kit/index.html
   - free-missed-revenue-audit.html
