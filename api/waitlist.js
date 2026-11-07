@@ -3,7 +3,7 @@ const {
   requireMethod, getUtmFields, readEnv, enforceRateLimit, sendEmail
 } = require('./_utils');
 
-const sources = new Set(['unscheduled_text_samples', 'missed_calls']);
+const sources = new Set(['unscheduled_text_samples', 'missed_calls', 'dental_recall_text_samples']);
 
 module.exports = async function handler(req, res) {
   if (!requireMethod(req, res)) return;

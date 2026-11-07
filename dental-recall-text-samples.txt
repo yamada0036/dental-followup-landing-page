@@ -1,0 +1,19 @@
+Dental recall text samples | Praxora
+https://www.getpraxora.com/dental-recall-text-samples.html
+
+Replace [First name], [Practice], and [Phone]. Review the current record and communication preferences before sending. Do not include private treatment details.
+
+1. Routine check-in
+Hi [First name], this is [Practice]. Would you like help finding a time for your next visit? Reply with a good time to call, or reach us at [Phone]. Reply STOP to opt out.
+
+2. Patient requested later contact
+Hi [First name], this is [Practice]. You asked us to check back around this time. Would you like us to help with an appointment, or would another date work better? Call [Phone] or reply here. Reply STOP to opt out.
+
+3. Scheduling was inconvenient
+Hi [First name], this is [Practice]. If scheduling has been difficult, our team can help find a time that works. Would you prefer a call or a text with available options? [Phone]. Reply STOP to opt out.
+
+4. Gentle reactivation
+Hi [First name], this is [Practice]. We would be happy to see you again when the timing is right. Would you like our team to help plan a visit? Reply YES or call [Phone]. Reply STOP to opt out.
+
+5. Pause outreach
+Hi [First name], this is [Practice]. We will pause our check-ins for now. If you would like help scheduling a visit later, reply here or call [Phone]. Reply STOP to opt out.

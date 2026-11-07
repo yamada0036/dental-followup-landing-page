@@ -113,6 +113,28 @@
       "permanent": true
     },
     {
+      "source": "/dental-recall-text-samples",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
+      "permanent": true
+    },
+    {
+      "source": "/dental-recall-text-samples/",
+      "has": [
+        {
+          "type": "host",
+          "value": "dental-followup-landing-page.vercel.app"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
+      "permanent": true
+    },
+    {
       "source": "/index.html",
       "has": [
         {
@@ -234,6 +256,28 @@
       "permanent": true
     },
     {
+      "source": "/dental-recall-text-samples",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
+      "permanent": true
+    },
+    {
+      "source": "/dental-recall-text-samples/",
+      "has": [
+        {
+          "type": "host",
+          "value": "getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
+      "permanent": true
+    },
+    {
       "source": "/index.html",
       "has": [
         {
@@ -352,6 +396,28 @@
         }
       ],
       "destination": "https://www.getpraxora.com/free-missed-revenue-audit.html",
+      "permanent": true
+    },
+    {
+      "source": "/dental-recall-text-samples",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
+      "permanent": true
+    },
+    {
+      "source": "/dental-recall-text-samples/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getpraxora.com"
+        }
+      ],
+      "destination": "https://www.getpraxora.com/dental-recall-text-samples.html",
       "permanent": true
     },
     {
