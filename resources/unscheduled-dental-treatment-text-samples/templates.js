@@ -10,7 +10,11 @@ document.querySelectorAll('[data-copy-template]').forEach((button) => {
     if (!message || !status) return;
     try {
       await navigator.clipboard.writeText(message.textContent.trim());
-      status.textContent = 'Copied. Review and personalize before sending.';
+      status.textContent = 'Copied. Review and personalize before sending. ';
+      const link = document.createElement('a');
+      link.href = '#waitlist';
+      link.textContent = 'Join the Praxora waitlist';
+      status.appendChild(link);
     } catch {
       status.textContent = 'Copy is unavailable. Select the message above to copy it, or download all five samples.';
     }
