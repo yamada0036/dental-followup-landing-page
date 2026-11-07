@@ -37,6 +37,8 @@ test('a waitlist request succeeds only after founder notification is delivered',
     assert.equal(sent.to, 'founder@example.com');
     assert.match(sent.text, /manager@example\.com/);
 
+    const recall = await submit({ ...request, source: 'dental_recall_text_samples' }, '198.51.100.34');
+    assert.equal(recall.status, 200);
     global.fetch = async () => ({ ok: false, status: 503, text: async () => '{}' });
     const failed = await submit(request, '198.51.100.32');
     assert.equal(failed.status, 503);

@@ -143,6 +143,8 @@ def main():
         ('/workflow-missed-implant-consult/', '/workflow-missed-implant-consult.html'),
         ('/free-missed-revenue-audit', '/free-missed-revenue-audit.html'),
         ('/free-missed-revenue-audit/', '/free-missed-revenue-audit.html'),
+        ('/dental-recall-text-samples', '/dental-recall-text-samples.html'),
+        ('/dental-recall-text-samples/', '/dental-recall-text-samples.html'),
         ('/index.html', '/'),
     ]
     production_hosts = [LEGACY_HOST, 'getpraxora.com', 'www.getpraxora.com']
@@ -206,6 +208,7 @@ def main():
         'workflow-recall-leakage',
         'workflow-missed-implant-consult',
         'free-missed-revenue-audit',
+        'dental-recall-text-samples',
     ]:
         assert published.get('/' + stem + '/') == BASE + '/' + stem + '.html'
     for folder in ['api', 'assets']:
