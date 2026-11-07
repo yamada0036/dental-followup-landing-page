@@ -55,6 +55,7 @@ P0 conversion endpoints live in `api/` as Vercel Serverless Functions:
 
 - `POST /api/lead` accepts Calculator leads and sends Email 1.
 - `POST /api/leak-review` accepts Free Follow-Up Leak Review requests and sends notification/confirmation emails.
+- `POST /api/waitlist` accepts explicit early-access interest from the missed-call and text-sample pages. It reports success only after a founder notification email is delivered; the existing Resend sender and `PRAXORA_NOTIFICATION_EMAIL` must be configured.
 - `GET /api/config` exposes non-secret frontend config such as the GA measurement ID.
 
 Supabase storage is optional. Email delivery uses Resend through server-side environment variables. With no Supabase variables, or when those variables are set but a Supabase call fails, both routes still accept a validated submission, skip the database write, and attempt email when Resend is configured.
