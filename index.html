@@ -171,6 +171,34 @@
       </div>
     </section>
 
+    <section class="section concept-demo" id="product-demo" aria-labelledby="product-demo-title">
+      <div class="concept-demo-heading">
+        <span class="section-kicker">30-second product concept</span>
+        <h2 id="product-demo-title">See how dental follow-up could work with Praxora</h2>
+        <p>A fictional unscheduled-treatment case shows the proposed handoff from an open list to a front-desk-reviewed next action. This animation is not a live product recording.</p>
+      </div>
+      <div class="concept-demo-grid">
+        <div class="concept-demo-media">
+          <video controls playsinline preload="none" poster="/assets/praxora-concept-demo-poster.webp" width="1280" height="720" aria-label="Praxora 30-second unscheduled-treatment concept demo">
+            <source src="/assets/praxora-concept-demo-30s.mp4" type="video/mp4" />
+            Your browser does not support video. <a href="/assets/praxora-concept-demo-30s.mp4">Open the 30-second demo</a>.
+          </video>
+          <p class="concept-demo-label">Product concept demo · Fictional patient data</p>
+        </div>
+        <div class="concept-demo-copy">
+          <h3>What the animation shows</h3>
+          <ol>
+            <li><strong>Proposed software view:</strong> a fictional practice dashboard and follow-up list surface an unscheduled crown case.</li>
+            <li><strong>Staff decision:</strong> a front-desk member sees the case context and a draft, then selects “Approve” in the animation. A real message would require practice review of consent, privacy and wording.</li>
+            <li><strong>Simulated result:</strong> the sent label, patient reply and Tuesday appointment are storyboard outcomes. No real message was sent or booking written to a practice system.</li>
+          </ol>
+          <a class="button primary" href="#pilot-application">Apply for a pilot</a>
+          <p class="concept-demo-note">Applying starts a conversation about your current process and a possible limited pilot. It does not grant immediate access to a finished product.</p>
+        </div>
+      </div>
+      <details class="concept-demo-transcript"><summary>Read the video summary</summary><p>0–6s: a fictional Riverside Dental dashboard shows unscheduled treatment, overdue recall and missed calls. 6–12s: an unscheduled crown case is prioritized and opened. 12–18s: a proposed message draft appears for front-desk editing and approval. 18–24s: “Sent — Simulated” appears, followed by a simulated patient reply and booked appointment. 24–30s: a fictional appointment book and pilot invitation close the concept demo.</p></details>
+    </section>
+
     <section class="section recovery" id="recover">
       <div class="section-head reveal">
         <span class="section-kicker">Unscheduled treatment first</span>
@@ -252,6 +280,24 @@
     <section class="section audit" id="audit">
       <div class="audit-card reveal"><div><span class="section-kicker">High-intent review</span><h2>Find where your unscheduled treatment follow-up is breaking.</h2><p>Request a free workflow review starting with unscheduled treatment, then missed calls and overdue recall. No patient data required. No system integration required.</p></div><div class="mini-card"><a class="button primary" href="/free-missed-revenue-audit.html">Get a Free Follow-Up Leak Review</a><a class="button ghost" href="/free-missed-revenue-audit.html">Free Leak Review</a></div></div>
     </section>
+    <section class="section pilot-section" id="pilot-application" aria-labelledby="pilot-title">
+      <div class="pilot-layout">
+        <div><span class="section-kicker">Limited pilot inquiry</span><h2 id="pilot-title">Apply for a pilot</h2><p>Tell us about your practice and which follow-up workflow you want to examine first. We will contact you to understand your current process and discuss whether a limited pilot is a fit.</p><p>No patient names, records or treatment details are requested. An application is not immediate access to the complete product.</p></div>
+        <form class="inline-form pilot-form" data-pilot-form>
+          <div class="visually-hidden" aria-hidden="true"><label for="pilot_company_website">Company website</label><input id="pilot_company_website" name="company_website" tabindex="-1" autocomplete="off" /></div>
+          <div class="form-field"><label for="pilot_name">Your name</label><input id="pilot_name" name="name" autocomplete="name" required /></div>
+          <div class="form-field"><label for="pilot_email">Work email</label><input id="pilot_email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="form-field"><label for="pilot_practice">Practice name</label><input id="pilot_practice" name="practice_name" autocomplete="organization" required /></div>
+          <div class="form-field"><label for="pilot_role">Your role</label><select id="pilot_role" name="role" required><option value="">Select a role</option><option value="owner">Owner</option><option value="office_manager">Office manager</option><option value="clinician">Clinician</option><option value="other">Other practice staff</option></select></div>
+          <div class="form-field"><label for="pilot_workflow">First workflow to review</label><select id="pilot_workflow" name="workflow" required><option value="">Select a workflow</option><option value="unscheduled_treatment">Unscheduled treatment</option><option value="missed_calls">Missed calls</option><option value="overdue_recall">Overdue recall</option></select></div>
+          <div class="form-field"><label for="pilot_locations">Number of locations</label><select id="pilot_locations" name="locations" required><option value="">Select a range</option><option value="1">1</option><option value="2-5">2–5</option><option value="6+">6+</option></select></div>
+          <label class="pilot-consent"><input type="checkbox" name="consent" required /> Contact me about a possible Praxora pilot.</label>
+          <button class="button primary" type="submit">Submit pilot application</button>
+          <p class="status-message" data-pilot-status role="status" aria-live="polite"></p>
+          <p class="form-help">We use these practice details to respond to your inquiry. <a href="/privacy/">Privacy policy</a>.</p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
@@ -261,6 +307,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="/assets/pilot-application.js" defer></script>
 </body>
 </html>
 

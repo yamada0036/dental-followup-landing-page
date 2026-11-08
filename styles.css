@@ -1061,3 +1061,36 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .waitlist-card { max-width: 620px; padding: 24px; border: 1px solid rgba(37,208,239,.26); border-radius: 18px; background: rgba(37,208,239,.06); }
 .waitlist-card .radio-label { display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
 .waitlist-card .radio-label input { margin-top: 5px; }
+
+/* Concept demo and pilot inquiry */
+.concept-demo { padding-top: 90px; background: linear-gradient(180deg, #081022, #050917); }
+.concept-demo-heading, .concept-demo-grid, .concept-demo-transcript, .pilot-layout {
+  position: relative; z-index: 1; width: min(var(--max), 100%); margin-left: auto; margin-right: auto;
+}
+.concept-demo-heading { max-width: 900px; margin-bottom: 30px; }
+.concept-demo-heading h2, .pilot-layout h2 { font-size: clamp(34px, 4vw, 58px); line-height: 1.08; letter-spacing: -.04em; }
+.concept-demo-heading p, .pilot-layout > div > p { color: var(--muted); font-size: 19px; max-width: 74ch; }
+.concept-demo-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(290px, .85fr); gap: 28px; align-items: start; }
+.concept-demo-media, .concept-demo-copy, .pilot-form { min-width: 0; border: 1px solid var(--line); border-radius: 22px; background: rgba(255,255,255,.055); padding: 20px; }
+.concept-demo-media video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #101726; border-radius: 12px; }
+.concept-demo-label { margin: 14px 0 0; color: #a8f0ff; font-size: 14px; font-weight: 850; }
+.concept-demo-copy h3 { font-size: 26px; }
+.concept-demo-copy ol { margin: 0 0 24px; padding-left: 24px; color: var(--muted); }
+.concept-demo-copy li { padding-left: 4px; margin: 0 0 14px; line-height: 1.55; }
+.concept-demo-copy strong { color: #fff; }
+.concept-demo-copy .button { display: inline-flex; }
+.concept-demo-note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
+.concept-demo-transcript { margin-top: 24px; color: var(--muted); }
+.concept-demo-transcript summary { cursor: pointer; color: #a8f0ff; font-weight: 800; }
+.concept-demo-transcript p { max-width: 90ch; line-height: 1.65; }
+.pilot-section { background: #081022; }
+.pilot-layout { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: 50px; align-items: start; }
+.pilot-form { padding: 28px; }
+.pilot-consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 750; }
+.pilot-consent input { margin-top: 6px; }
+.pilot-form .form-help a { text-decoration: underline; }
+.concept-demo-link { padding: 20px 24px; margin: 18px 0; border: 1px solid rgba(37,208,239,.25); border-radius: 16px; background: rgba(37,208,239,.07); }
+.concept-demo-link strong { color: #fff; font-size: 18px; }
+.concept-demo-link p { margin: 8px 0 12px; }
+@media (max-width: 900px) { .concept-demo-grid, .pilot-layout { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .concept-demo { padding-top: 64px; } .concept-demo-media, .concept-demo-copy, .pilot-form { padding: 16px; } .concept-demo-copy .button, .pilot-form .button { width: 100%; } }
