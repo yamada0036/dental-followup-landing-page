@@ -55,6 +55,7 @@ P0 conversion endpoints live in `api/` as Vercel Serverless Functions:
 
 - `POST /api/lead` accepts Calculator leads and sends Email 1.
 - `POST /api/leak-review` accepts Free Follow-Up Leak Review requests and sends notification/confirmation emails.
+- `POST /api/pilot-application` accepts practice-only pilot inquiries and returns success only after the founder notification email is delivered. It uses the existing Resend settings and `PRAXORA_NOTIFICATION_EMAIL`; no patient details are collected or stored.
 - `POST /api/waitlist` accepts explicit early-access interest from the missed-call and text-sample pages. It reports success only after a founder notification email is delivered; the existing Resend sender and `PRAXORA_NOTIFICATION_EMAIL` must be configured.
 - `GET /api/config` exposes non-secret frontend config such as the GA measurement ID.
 
