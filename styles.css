@@ -1029,6 +1029,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .breadcrumbs { max-width: 1160px; margin: 0 auto; padding: 112px 24px 0; display: flex; flex-wrap: wrap; gap: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted); }
 .breadcrumbs a { color: #91e5ff; text-decoration: underline; text-underline-offset: 3px; }
 .breadcrumbs + .page-hero { padding-top: 36px; }
+#what-is-praxora .content-wrap { margin-top: 36px; }
+#what-is-praxora .content-block h3 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+#what-is-praxora .content-block p + h3 { margin-top: 22px; }
+#what-is-praxora .content-block a {
+  color: #8de7ff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .seo-faq-list { max-width: 860px; margin: 0 auto; }
 .seo-faq details { border-bottom: 1px solid var(--line); padding: 24px 0; }
 .seo-faq summary { cursor: pointer; font-size: 1.125rem; font-weight: 700; line-height: 1.5; }

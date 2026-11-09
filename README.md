@@ -1,6 +1,6 @@
 ﻿# Praxora
 
-Praxora is positioned as **AI Follow-Up Recovery for Dental Practices**.
+Praxora is positioned as **dental follow-up software (with human review)** for dental practices. It is not a service, agency, managed service, or done-for-you operation. Praxora, the company behind the brand, operates it at **https://www.getpraxora.com**.
 
 The core problem is **Follow-Up Leakage**: patient opportunities falling out of the normal follow-up process without a clear next action, owner, or tracked outcome.
 
@@ -179,6 +179,7 @@ production database or email health.
 ## Important Files
 
 - `index.html` - homepage
+- `about/` - what Praxora is, what the software does, and who operates it
 - `dental-revenue-leak-calculator/` - Revenue Leak Calculator
 - `follow-up-recovery-kit/` - web-based Recovery Kit
 - `free-missed-revenue-audit.html` - Free Follow-Up Leak Review form
